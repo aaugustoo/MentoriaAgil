@@ -48,9 +48,9 @@ O projeto segue uma arquitetura moderna dividida em dois módulos:
 ## 🚀 Como Executar o Projeto
 
 ### Pré-requisitos
-* Java JDK 17+
-* Node.js e NPM
-* Angular CLI
+* [Java JDK 17+](https://www.oracle.com/java/technologies/downloads/#java17)
+* [Node.js e NPM](https://nodejs.org/)
+* [Angular CLI](https://angular.io/cli)
 
 ### 1️⃣ Clonar o Repositório
 ```bash
