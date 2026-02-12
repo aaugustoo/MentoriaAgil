@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 
+import com.mentoria.agil.backend.dto.UserDTO;
+import com.mentoria.agil.backend.model.User;
+import com.mentoria.agil.backend.service.UserService;
 import com.mentoria.agil.backend.service.TokenBlacklistService;
 
 //classe de controle de autenticação e autorização
@@ -20,7 +23,23 @@ import com.mentoria.agil.backend.service.TokenBlacklistService;
 public class AuthController {
     
     private final TokenBlacklistService tokenBlacklistService;
+    private final UserService userService;
 
+    public AuthController(UserService userService, TokenBlacklistService tokenBlacklistService) {
+      this.userService = userService;
+      this.tokenBlacklistService = tokenBlacklistService;
+  }
+  
+    @PostMapping("/register")
+    public ResponseEntity<String> registrarUsuario(@RequestBody UserDTO userDTO) {
+        try {
+            User novoUsuario = userService.salvarUsuario(userDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Usuário cadastrado com sucesso. ID: " + novoUsuario.getId());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao cadastrar usuário: " + e.getMessage());
+        }
+    }
+  
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@RequestHeader("Authorization") String authHeader) {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
