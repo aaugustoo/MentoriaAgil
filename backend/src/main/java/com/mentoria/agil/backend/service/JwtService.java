@@ -1,54 +1,48 @@
 package com.mentoria.agil.backend.service;
 
-import com.okta.jwt.JwtVerificationException;
-
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.mentoria.agil.backend.service.TokenBlacklistService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+import java.util.Date;
 
 @Service
 public class JwtService {
 
-    private static final TokenBlacklistService tokenBlacklistService;
+    @Value("${api.security.token.secret:my-secret-key}")
+    private String secret;
+    
+    @Value("${api.security.token.issuer:auth-api}")
+    private String issuer;
+
+    private final TokenBlacklistService tokenBlacklistService;
     
     private Algorithm getAlgorithm() {
-        return Algorithm.HMAC256(SECRET);
+        return Algorithm.HMAC256(secret);
     }
 
     public boolean isValidToken(String token) {
-    if (tokenBlacklistService.isTokenBlacklisted(token)) {
-        return false;
-    }
-    try {
-        JWTVerifier verifier = JWT.require(algorithm)
-            .withIssuer("auth-api")
-            .build();
-        verifier.verify(token);
-        return true;
-    } catch (JwtVerificationException exception) {
-        return false;
-    }
-}
-    
-    public Date getExpirationFromToken(String token) {
-        if (token == null || token.isBlank()) {
-            return null;
-        }
-        
         try {
-            //Decode para blacklist
-            DecodedJWT decodedJWT = JWT.decode(token);
-            Date expiration = decodedJWT.getExpiresAt();
-            
-            //Token sem data de expiração - assume 24 horas
-            if (expiration == null) {
-                return new Date(System.currentTimeMillis() + (24 * 60 * 60 * 1000));
+            //Verifica se está na blacklist (pós-logout)
+            if (tokenBlacklistService.isTokenBlacklisted(token)) {
+                return false; // Token invalidado pelo logout
             }
             
-            //Se já expirou, mantém a data original mesmo assim
-            return expiration;
+            //Verifica assinatura, issuer e expiração
+            JWT.require(getAlgorithm())
+               .withIssuer(issuer)
+               .build()
+               .verify(token);
             
-        } catch (JWTDecodeException e) {
-            // Token inválido - fallback seguro (1 hora)
-            return new Date(System.currentTimeMillis() + (60 * 60 * 1000));
+            return true;
+            
+        } catch (JWTVerificationException e) {
+            return false; // Token inválido (assinatura, expirado, issuer errado)
         }
     }
 }

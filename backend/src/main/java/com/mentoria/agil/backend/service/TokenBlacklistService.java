@@ -1,50 +1,38 @@
 package com.mentoria.agil.backend.service;
 
 import org.springframework.stereotype.Service;
-import com.mentoria.agil.backend.service.JwtService;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
+import com.mentoria.agil.backend.service.TokenService;
 
 @Service
 public class TokenBlacklistService {
     
     private final ConcurrentHashMap<String, Long> blacklistedTokens = new ConcurrentHashMap<>();
     
-    private final JwtService tokenService;
+    private final TokenService tokenService;
     
-    public TokenBlacklistService(JwtService tokenService) {
+    public TokenBlacklistService(TokenService tokenService) {
         this.tokenService = tokenService;
     }
     
     public void invalidateToken(String token) {
-        //Extrair data de expiração do token
-        Date expirationDate = tokenService.getExpirationFromToken(token);
+        String cleanToken = token.replace("Bearer ", "");
+        Date expiration = tokenService.getExpirationFromTokenForBlacklist(cleanToken);
         
-        if (expirationDate != null) {
-            blacklistedTokens.put(token, expirationDate.getTime());
-        } else {
-            // expira em 24h se não conseguir extrair
-            long fallbackExpiration = System.currentTimeMillis() + (24 * 60 * 60 * 1000);
-            blacklistedTokens.put(token, fallbackExpiration);
-        }
-        
-        //Limpa tokens expirados
+        blacklistedTokens.put(cleanToken, expiration.getTime());
         cleanExpiredTokens();
     }
     
     public boolean isTokenBlacklisted(String token) {
-        //Limpa expirados antes de verificar
+        //Limpa tokens expirados antes de verificar
         cleanExpiredTokens();
         return blacklistedTokens.containsKey(token);
     }
     
-    private void cleanExpiredTokens() {
+     private void cleanExpiredTokens() {
         long now = System.currentTimeMillis();
-        
-        blacklistedTokens.entrySet().removeIf(entry -> {
-            Long expirationTime = entry.getValue();
-            return expirationTime < now; // Token expirado pode ser removido
-        });
+        blacklistedTokens.entrySet().removeIf(entry -> entry.getValue() < now);
     }
     
     public int getBlacklistSize() {
