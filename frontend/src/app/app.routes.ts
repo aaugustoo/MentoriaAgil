@@ -2,30 +2,48 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   { 
-    path: 'cadastro', 
-    loadComponent: () => import('./cadastro/cadastro').then(m => m.CadastroComponent) 
+    path: '', 
+    redirectTo: 'registro', 
+    pathMatch: 'full' 
+
+  },
+  { 
+    path: 'termos', 
+    loadComponent: () => import('./views/termos/Termos')
+    .then(m => m.Termos) 
+  },
+  { 
+    path: 'registro', 
+    loadComponent: () => import('./views/auth/registro/Registro')
+    .then(m => m.Registro)
   },
   { 
     path: 'login', 
-    loadComponent: () => import('./login/login').then(m => m.LoginComponent)
+    loadComponent: () => import('./views/auth/login/Login')
+    .then(m => m.Login)
   },
   { 
     path: 'logout', 
-    loadComponent: () => import('./views/logout/logout').then(m => m.LogoutView) 
+    loadComponent: () => import('./views/auth/logout/Logout')
+    .then(m => m.Logout) 
   },
   
   {
     path: '',
-    loadComponent: () => import('./views/layout/layout').then(m => m.LayoutComponent),
+    loadComponent: () => import('./layouts/Layout')
+    .then(m => m.Layout),
     children: [
       {
         path: 'dashboard',
-        loadComponent: () => import('./views/dashboard/dashboard').then(m => m.DashboardView)
+        loadComponent: () => import('./views/dashboard/Dashboard')
+        .then(m => m.Dashboard)
       },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
 
-  // Fallback: se não encontrar nada, manda para o cadastro
-  { path: '**', redirectTo: 'cadastro' }
+  { 
+    path: '**', 
+    redirectTo: 'registro' 
+  }
 ];

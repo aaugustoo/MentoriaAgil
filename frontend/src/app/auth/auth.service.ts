@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, map, tap, catchError, of } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
-import { User } from './user';
+import { User } from '../models/User';
 
 @Injectable({
   providedIn: 'root'
