@@ -9,7 +9,7 @@ import { User } from '../models/User';
 })
 export class AuthService {
 
-  private readonly API_URL = 'http://localhost:3000/auth';
+  private readonly API_URL = 'http://localhost:8080/auth';
 
   private currentUserSubject = new BehaviorSubject<User | null>(this.loadUser());
   public currentUser$ = this.currentUserSubject.asObservable();
@@ -25,11 +25,8 @@ export class AuthService {
       );
   }
 
-  register(user: User): Observable<User | null> {
-    return this.http.post<User>(`${this.API_URL}/register`, user)
-      .pipe(
-        catchError(() => of(null))
-      );
+  register(user: User): Observable<any> {
+    return this.http.post(`${this.API_URL}/register`, user);
   }
 
   logout(): void {
@@ -52,20 +49,24 @@ export class AuthService {
   }
 
   private handleAuthentication(token: string): void {
-    const decoded: any = jwtDecode(token);
+    try{
+      const decoded: any = jwtDecode(token);
 
-    const user: User = {
-      id: decoded.id,
-      name: decoded.name,
-      email: decoded.email,
-      role: decoded.role,
-      token: token
-    };
+      const user: User = {
+        id: decoded.id,
+        name: decoded.name,
+        email: decoded.email,
+        role: decoded.role,
+        token: token
+      };
 
-    localStorage.setItem('auth_token', token);
-    localStorage.setItem('auth_user', JSON.stringify(user));
+      localStorage.setItem('auth_token', token);
+      localStorage.setItem('auth_user', JSON.stringify(user));
 
-    this.currentUserSubject.next(user);
+      this.currentUserSubject.next(user);
+    } catch (error){
+      console.error('Erro ao decodificar token', error);
+    }
   }
 
   private loadUser(): User | null {
