@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 
 @Component({
   selector: 'app-logout-view',
@@ -9,12 +9,19 @@ import { RouterModule } from '@angular/router';
   templateUrl: './logout.html'
 })
 export class Logout implements OnInit, OnDestroy {
-  contador = 15;
+  contador = signal(3);
   private timer: any;
+
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
     this.timer = setInterval(() => {
-      if (this.contador > 0) this.contador--;
+      this.contador.update(v => v - 1);
+
+      if (this.contador() === 0){
+        clearInterval(this.timer);
+        this.router.navigate(['/']);
+      }
     }, 1000);
   }
 
