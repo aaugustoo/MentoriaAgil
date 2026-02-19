@@ -34,6 +34,10 @@ export class AuthService {
     return this.http.post(`${this.API_URL}/register`, user);
   }
 
+  logoutNoServidor(): Observable<any> {
+    return this.http.post(`${this.API_URL}/logout`, {});
+  }
+
   logout(): void {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('auth_user');
