@@ -1,6 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -11,13 +12,14 @@ import { RouterModule, Router } from '@angular/router';
 export class Header {
   isMenuOpen = signal(false);
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   toggleMenu() {
     this.isMenuOpen.set(!this.isMenuOpen());
   }
 
   logout() {
+    this.authService.logout();
     this.router.navigate(['/logout']);
   }
 }

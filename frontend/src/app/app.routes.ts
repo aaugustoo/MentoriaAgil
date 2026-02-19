@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './auth/auth.guard';
+import { AuthGuard } from './auth/auth.guard';
 
 export const routes: Routes = [
   {
@@ -33,18 +33,21 @@ export const routes: Routes = [
     path: '',
     loadComponent: () => import('./layouts/Layout')
     .then(m => m.Layout),
-    canActivate: [authGuard],
+    canActivate: [AuthGuard],
     children: [
       {
         path: 'dashboard',
         loadComponent: () => import('./views/dashboard/Dashboard')
         .then(m => m.Dashboard)
       },
-      {
-        path: 'mentor/cadastro',
-        loadComponent: () => import('./views/mentor/mentor-form/MentorForm')
-        .then(m => m.MentorFormComponent)
-      },
+
+ {
+  path: 'mentores',
+  loadComponent: () =>
+    import('./views/mentores/mentor-list.component')
+      .then(m => m.MentorListComponent),
+  canActivate: [AuthGuard]
+},
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
