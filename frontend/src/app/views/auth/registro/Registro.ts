@@ -21,7 +21,7 @@ export class Registro implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
@@ -38,7 +38,7 @@ export class Registro implements OnInit {
       senha: ['', [Validators.required, Validators.minLength(8)]],
       // Inicia com o valor padrão selecionado
       role: ['ESTUDANTE', [Validators.required]],
-      termos: [false, [Validators.requiredTrue]]
+      termos: [false, [Validators.requiredTrue]],
     });
   }
 
@@ -50,43 +50,47 @@ export class Registro implements OnInit {
     this.cadastroForm.patchValue({ role: role });
   }
 
-  irLogin() { this.router.navigate(['/login']); }
-  irTermos() { this.router.navigate(['/termos']); }
+  irLogin() {
+    this.router.navigate(['/login']);
+  }
+  irTermos() {
+    this.router.navigate(['/termos']);
+  }
 
   onSubmit() {
-    if (this.cadastroForm.invalid) {
-      this.cadastroForm.markAllAsTouched();
-      return;
-    }
+    if (this.cadastroForm.invalid) return;
 
     this.isLoading = true;
-    const formValues = this.cadastroForm.value;
+    const { nome, email, senha, role } = this.cadastroForm.value;
 
-    const novoUsuario: User = {
-      name: formValues.nome,
-      email: formValues.email,
-      password: formValues.senha,
-      role: formValues.role // Envia 'ESTUDANTE' ou 'MENTOR'
-    };
+    const novoUsuario: User = { name: nome, email, password: senha, role };
+
+    // 1. Primeiro realiza o Cadastro
     this.authService.register(novoUsuario).subscribe({
       next: () => {
-        this.isLoading = false;
-
-        // Lógica de navegação condicional
-        if (this.selectedRole === 'MENTOR') {
-          // Se for mentor, vai para a segunda etapa do cadastro
-          this.router.navigate(['/mentor/cadastro']);
-        } else {
-          // Se for estudante, vai direto para o dashboard ou login
-          alert('Cadastro realizado com sucesso!');
-          this.router.navigate(['/login']);
-        }
+        // 2. Se o cadastro deu certo, realiza o Login automático
+        this.authService.login(email, senha).subscribe({
+          next: (sucesso) => {
+            this.isLoading = false;
+            if (sucesso) {
+              // 3. Agora autenticado, a navegação para rotas protegidas funcionará
+              if (role === 'MENTOR') {
+                this.router.navigate(['/mentor/cadastro']);
+              } else {
+                this.router.navigate(['/dashboard']);
+              }
+            }
+          },
+          error: () => {
+            this.isLoading = false;
+            this.router.navigate(['/login']); // Fallback caso o auto-login falhe
+          },
+        });
       },
-      error: (err: any) => {
+      error: (err) => {
         this.isLoading = false;
-        const mensagemErro = err.error?.message || 'Falha ao realizar o cadastro.';
-        alert(`Erro: ${mensagemErro}`);
-      }
-    })
+        alert(err.error?.message || 'Erro no cadastro');
+      },
+    });
   }
 }

@@ -1,7 +1,6 @@
 package com.mentoria.agil.backend.config;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -21,14 +20,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     @Autowired
-    SecurityFilter securityFilter;
+    private SecurityFilter securityFilter;
     
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -44,28 +42,27 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
-                //  Configuração de CORS d
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        // Endpoints públicos 
+                        // 1. Endpoints Públicos
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        
+                        // 2. Endpoints de Mentor (Acesso restrito por Role)
+                        // POST para criar perfil e PUT para editar exigem ROLE_MENTOR
+                        .requestMatchers(HttpMethod.POST, "/api/mentors/**").hasRole("MENTOR")
+                        .requestMatchers(HttpMethod.PUT, "/api/mentors/**").hasRole("MENTOR")
+                        // DELETE exige MENTOR ou ADMIN
+                        .requestMatchers(HttpMethod.DELETE, "/api/mentors/**").hasAnyRole("MENTOR", "ADMIN")
+                        // GET de mentores é liberado para qualquer usuário logado (estudantes precisam ver mentores)
+                        .requestMatchers(HttpMethod.GET, "/api/mentors/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/users/mentores").authenticated()
                         
-                        // Endpoints de mentor 
-                        .requestMatchers(HttpMethod.POST, "/api/mentors").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/mentors").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/mentors/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/mentors/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/mentors/**").authenticated()
+                        // 3. Endpoints de Admin
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         
-                        // Endpoints de admin 
-                        .requestMatchers(HttpMethod.POST, "/admin/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/admin/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/admin/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/admin/**").hasRole("ADMIN")
-                        
+                        // 4. Qualquer outra requisição precisa de autenticação
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
@@ -78,11 +75,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(
-            "http://localhost:4200", 
-            "http://localhost:8080"
-        ));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE","PATCH", "OPTIONS"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://localhost:8080"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
         configuration.setAllowCredentials(true);

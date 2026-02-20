@@ -1,7 +1,6 @@
 <h2>Mentores Disponíveis</h2>
 
 <div class="filtros">
-
   <select [(ngModel)]="filtros.areaPrincipal" (change)="onFiltroChange()">
     <option value="">Área</option>
     <option value="TI">TI</option>
@@ -25,16 +24,13 @@
     <option value="">Ordenar</option>
     <option value="nome">Ordem Alfabética</option>
   </select>
-
 </div>
 
 <div *ngFor="let mentor of mentores" class="mentor-card">
-
   <h3>{{ mentor.name }}</h3>
   <p><strong>Especialização:</strong> {{ mentor.especializacao }}</p>
   <p><strong>Resumo:</strong> {{ mentor.experiencias }}</p>
   <p><strong>Área Principal:</strong> {{ mentor.areaPrincipal }}</p>
   <p><strong>Tipo:</strong> {{ mentor.tipoMentoria }}</p>
   <p><strong>Disponibilidade:</strong> {{ mentor.disponibilidade }}</p>
-
 </div>

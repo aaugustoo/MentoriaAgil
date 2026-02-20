@@ -4,6 +4,8 @@ import { BehaviorSubject, Observable, map, tap, catchError, of } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { User } from '../models/User';
 
+export type UserRole = 'ADMIN' | 'MENTOR' | 'USER' | 'VISITANTE';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -57,9 +59,14 @@ export class AuthService {
   }
 }
 
-  hasRole(role: string): boolean {
+  hasRole(allowedRoles: string | string[]): boolean {
     const user = this.currentUserSubject.value;
-    return user?.role === role;
+    if (!user || !user.role) return false;
+
+    if (Array.isArray(allowedRoles)) {
+      return allowedRoles.includes(user.role);
+    }
+    return user.role === allowedRoles;
   }
 
   getToken(): string | null {

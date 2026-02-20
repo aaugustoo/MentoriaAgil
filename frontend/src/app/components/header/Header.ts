@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
@@ -12,9 +12,15 @@ import { AuthService } from '../../auth/auth.service';
 export class Header {
   isMenuOpen = signal(false);
 
+  user = computed(() => {
+    let currentUser;
+    this.authService.currentUser$.subscribe(u => currentUser = u);
+    return currentUser;
+  });
+
   constructor(
     private router: Router,
-    private authService: AuthService,
+    public authService: AuthService,
   ) {}
 
   toggleMenu() {

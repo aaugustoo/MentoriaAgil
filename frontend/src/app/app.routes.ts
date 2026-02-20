@@ -19,6 +19,12 @@ export const routes: Routes = [
     .then(m => m.Registro)
   },
   {
+    path: 'mentor/cadastro',
+    loadComponent: () => import('./views/mentor/mentor-form/MentorForm').then(m => m.MentorFormComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'MENTOR' } // Segurança extra: só mentores entram aqui
+  },
+  {
     path: 'login',
     loadComponent: () => import('./views/auth/login/Login')
     .then(m => m.Login)
@@ -40,14 +46,14 @@ export const routes: Routes = [
         loadComponent: () => import('./views/dashboard/Dashboard')
         .then(m => m.Dashboard)
       },
-
- {
-  path: 'mentores',
-  loadComponent: () =>
-    import('./views/mentores/mentor-list.component')
-      .then(m => m.MentorListComponent),
-  canActivate: [AuthGuard]
-},
+      {
+        path: 'mentores',
+        loadComponent: () =>
+          import('./views/mentores/mentor-list.component')
+            .then(m => m.MentorListComponent),
+        canActivate: [AuthGuard],
+        data: { role: 'MENTOR' }
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },

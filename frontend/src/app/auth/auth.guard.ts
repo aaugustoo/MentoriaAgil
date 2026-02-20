@@ -8,15 +8,14 @@ export const AuthGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   const router = inject(Router);
 
   if (!authService.isAuthenticated()) {
-    console.warn('Usuário não autenticado. Redirecionando para /login');
-    return router.createUrlTree(['/login']);
+    router.navigate(['/login']);
+    return false;
   }
 
-  const requiredRole = route.data?.['role'] as 'ADMIN' | 'USER' | undefined;
-
+  const requiredRole = route.data['role'];
   if (requiredRole && !authService.hasRole(requiredRole)) {
-    console.warn('Usuário não possui permissão suficiente.');
-    return router.createUrlTree(['/unauthorized']);
+    router.navigate(['/dashboard']); // Redireciona se não tiver permissão
+    return false;
   }
 
   return true;

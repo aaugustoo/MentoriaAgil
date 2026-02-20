@@ -4,5 +4,6 @@ public enum Role {
     VISITANTE,
     ADMIN,
     USER,   
-    MENTOR  
+    MENTOR,
+    ESTUDANTE
 }
