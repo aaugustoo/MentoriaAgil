@@ -6,34 +6,31 @@ import com.mentoria.agil.backend.model.User;
 
 public class PerfilMentorResponseDTO {
     
-    private Long id;                  // id do perfil
-    private Long userId;              // id do usuário
-    private String name;              // User
-    private String email;             // User
-    private String role;              // User
-    private String especializacao;    // PerfilMentor
-    private String experiencias;      // PerfilMentor
-    private String formacao;          // PerfilMentor
-    private LocalDateTime createdAt;  // User
+    private Long id;
+    private Long userId;
+    private String name;
+    private String email;
+    private String role;
+    private String especializacao;
+    private String experiencias;
+    private String formacao;
+    private LocalDateTime createdAt;
 
-    // Construtor padrão
     public PerfilMentorResponseDTO() {}
 
-    // Construtor que recebe as entidades
     public PerfilMentorResponseDTO(PerfilMentor perfil) {
         User user = perfil.getUser();
         this.id = perfil.getId();
         this.userId = user.getId();
         this.name = user.getName();
         this.email = user.getEmail();
-        this.role = user.getRole() != null ? user.getRole().name() : null;     //conversão de role para string
+        this.role = user.getRole() != null ? user.getRole().name() : null;
         this.especializacao = perfil.getEspecializacao();
         this.experiencias = perfil.getExperiencias();
         this.formacao = perfil.getFormacao();
         this.createdAt = user.getCreatedAt();
     }
 
-    // Construtor com todos os parâmetros
     public PerfilMentorResponseDTO(Long id, Long userId, String name, String email, 
                             String role, String especializacao, String experiencias, 
                             String formacao, LocalDateTime createdAt) {
@@ -47,8 +44,6 @@ public class PerfilMentorResponseDTO {
         this.formacao = formacao;
         this.createdAt = createdAt;
     }
-
-    // getters e setters
 
     public Long getId() {
         return id;

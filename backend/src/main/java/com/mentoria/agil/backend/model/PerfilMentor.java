@@ -22,17 +22,13 @@ public class PerfilMentor {
     @JoinColumn(name = "usuario_id", unique = true, nullable = false)
     private User user;
 
-    // Construtor padrão
     public PerfilMentor() {}
 
-    // Construtor com campos obrigatórios
     public PerfilMentor(String especializacao, String experiencias, User user) {
         this.especializacao = especializacao;
         this.experiencias = experiencias;
         this.user = user;
     }
-
-    // Getters e Setters
 
     public Long getId() {
         return id;

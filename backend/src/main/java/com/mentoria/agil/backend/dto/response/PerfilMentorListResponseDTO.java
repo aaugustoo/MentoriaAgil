@@ -3,19 +3,15 @@ package com.mentoria.agil.backend.dto.response;
 import com.mentoria.agil.backend.model.PerfilMentor;
 import com.mentoria.agil.backend.model.User;
 
-// ==== versão resumida para listagens === //
-
 public class PerfilMentorListResponseDTO {
-    private Long id;                  // id do perfil
-    private String name;              // User
-    private String email;             // User
-    private String especializacao;    // PerfilMentor
-    private String formacao;          // PerfilMentor
+    private Long id;
+    private String name;
+    private String email;
+    private String especializacao;
+    private String formacao;
 
-    // Construtor padrão
     public PerfilMentorListResponseDTO() {}
 
-    // Construtor que recebe as entidades
     public PerfilMentorListResponseDTO(PerfilMentor perfil) {
         User user = perfil.getUser();
         this.id = perfil.getId();
@@ -25,7 +21,6 @@ public class PerfilMentorListResponseDTO {
         this.formacao = perfil.getFormacao();
     }
 
-    // Construtor com parâmetros
     public PerfilMentorListResponseDTO(Long id, String name, String email, 
                                 String especializacao, String formacao) {
         this.id = id;
@@ -35,7 +30,6 @@ public class PerfilMentorListResponseDTO {
         this.formacao = formacao;
     }
 
-    // getters e setters
 
     public Long getId() {
         return id;

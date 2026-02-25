@@ -41,7 +41,6 @@ public class AuthFacade implements AuthFacadeInterface {
         LoginResponseDTO response = new LoginResponseDTO(
                 token, user.getName(), user.getEmail(), user.getRole());
 
-        // Adiciona links hipertexto (HATEOAS)
         response.add(linkTo(methodOn(AuthController.class).login(dto)).withSelfRel());
         response.add(linkTo(methodOn(AuthController.class).logout(null)).withRel("logout"));
 

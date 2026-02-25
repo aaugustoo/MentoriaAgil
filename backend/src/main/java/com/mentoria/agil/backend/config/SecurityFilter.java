@@ -32,13 +32,11 @@ public class SecurityFilter extends OncePerRequestFilter {
         String token = recoverToken(request);
         
         if (token != null) {
-            // 1. Verifica se o token foi invalidado (Logout)
             if (blacklistService.isTokenBlacklisted(token)) {
                 filterChain.doFilter(request, response);
                 return;
             }
 
-            // 2. Extrai o e-mail do token
             String email = tokenServiceInterface.getSubjectFromToken(token);
             
             if (email != null) {
