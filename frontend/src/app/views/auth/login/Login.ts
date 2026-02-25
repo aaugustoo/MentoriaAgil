@@ -34,7 +34,6 @@ export class Login {
         next: (sucesso) => {
           if (sucesso) {
             console.log('Login realizado com sucesso!');
-            // 4. Redireciona para a dashboard
             this.router.navigate(['/dashboard']);
           } else {
             this.errorMessage = 'Falha no login. Verifique e-mail/senha.';

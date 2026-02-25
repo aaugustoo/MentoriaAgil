@@ -15,7 +15,6 @@ export class Registro implements OnInit {
   cadastroForm!: FormGroup;
   isLoading = false;
 
-  // Controla visualmente qual card está selecionado no HTML
   selectedRole: 'ESTUDANTE' | 'MENTOR' = 'ESTUDANTE';
 
   constructor(
@@ -36,15 +35,11 @@ export class Registro implements OnInit {
         ],
       ],
       senha: ['', [Validators.required, Validators.minLength(8)]],
-      // Inicia com o valor padrão selecionado
       role: ['ESTUDANTE', [Validators.required]],
       termos: [false, [Validators.requiredTrue]],
     });
   }
 
-  /**
-   * Atualiza a seleção visual e o valor no formulário reativo
-   */
   selectRole(role: 'ESTUDANTE' | 'MENTOR') {
     this.selectedRole = role;
     this.cadastroForm.patchValue({ role: role });
@@ -65,15 +60,12 @@ export class Registro implements OnInit {
 
     const novoUsuario: User = { name: nome, email, password: senha, role };
 
-    // 1. Primeiro realiza o Cadastro
     this.authService.register(novoUsuario).subscribe({
       next: () => {
-        // 2. Se o cadastro deu certo, realiza o Login automático
         this.authService.login(email, senha).subscribe({
           next: (sucesso) => {
             this.isLoading = false;
             if (sucesso) {
-              // 3. Agora autenticado, a navegação para rotas protegidas funcionará
               if (role === 'MENTOR') {
                 this.router.navigate(['/mentor/cadastro']);
               } else {
@@ -83,7 +75,7 @@ export class Registro implements OnInit {
           },
           error: () => {
             this.isLoading = false;
-            this.router.navigate(['/login']); // Fallback caso o auto-login falhe
+            this.router.navigate(['/login']);
           },
         });
       },

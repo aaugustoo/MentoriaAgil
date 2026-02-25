@@ -21,7 +21,7 @@ describe('MentorService', () => {
   });
 
   afterEach(() => {
-    httpMock.verify(); // Garante que não há requisições pendentes
+    httpMock.verify();
   });
 
   it('deve montar a requisição POST adequadamente com o MentorDTO', () => {
@@ -38,6 +38,6 @@ describe('MentorService', () => {
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(mockMentor);
 
-    req.flush({}); // Simula uma resposta de sucesso
+    req.flush({});
   });
 });

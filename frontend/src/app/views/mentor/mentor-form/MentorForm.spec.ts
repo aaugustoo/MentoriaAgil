@@ -10,7 +10,6 @@ describe('MentorFormComponent', () => {
   let mentorServiceMock: any;
 
   beforeEach(async () => {
-    // Criamos um mock para o serviço
     mentorServiceMock = {
       createProfile: vi.fn().mockReturnValue(of({}))
     };
@@ -32,7 +31,6 @@ describe('MentorFormComponent', () => {
   });
 
   it('deve chamar o serviço com os dados mapeados ao submeter formulário válido', () => {
-    // Preenche o formulário
     component.mentorForm.setValue({
       specialty: 'Backend',
       experienceYears: 8,
@@ -42,7 +40,6 @@ describe('MentorFormComponent', () => {
 
     component.enviar();
 
-    // Verifica se a lógica de transformação de string para array funcionou no envio
     expect(mentorServiceMock.createProfile).toHaveBeenCalledWith({
       specialty: 'Backend',
       experienceYears: 8,
@@ -53,7 +50,7 @@ describe('MentorFormComponent', () => {
 
   it('não deve chamar o serviço se o formulário estiver inválido', () => {
     component.mentorForm.setValue({
-      specialty: '', // Inválido (obrigatório)
+      specialty: '',
       experienceYears: null,
       bio: '',
       skills: ''

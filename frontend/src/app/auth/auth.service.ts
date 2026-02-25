@@ -19,7 +19,7 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(email: string, password: string): Observable<boolean> {
-  const headers = new HttpHeaders({ 'Content-Type': 'application/json' }); // Força o JSON
+  const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
   return this.http.post<{ token: string }>(
     `${this.API_URL}/login`, 
