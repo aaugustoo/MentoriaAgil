@@ -42,9 +42,8 @@ public class UserService implements UserServiceInterface {
         
         user.setRole(dto.role() != null ? dto.role() : Role.VISITANTE);
 
-        // Criptografia da senha
         user.setPassword(passwordEncoder.encode(dto.password()));
-        // Se for um Mentor, salva os dados extras que vieram nulos por enquanto
+
         return userRepository.save(user);
     }
 
@@ -57,20 +56,16 @@ public class UserService implements UserServiceInterface {
 public List<MentorResponseDTO> listarMentores(String especialidade, String areaAtuacao, String tipoMentoria) {
     
     return perfilMentorRepository.findAll().stream()
-            // Somente Mentores Ativos 
             .filter(perfil -> perfil.getUser().isAtivo())
-            
-            //  Filtros Dinâmicos 
+
             .filter(perfil -> especialidade == null || perfil.getEspecializacao().equalsIgnoreCase(especialidade))
             .filter(perfil -> areaAtuacao == null || perfil.getUser().getAreaInteresse().equalsIgnoreCase(areaAtuacao))
             .filter(perfil -> tipoMentoria == null || perfil.getUser().getTipoMentoria().equalsIgnoreCase(tipoMentoria))
-            
-            // Converte para o DTO 
+
             .map(MentorResponseDTO::new)
-            
-            // Ordenação Alfabética 
+
             .sorted((m1, m2) -> m1.nome().compareToIgnoreCase(m2.nome()))
             
             .collect(Collectors.toList());
-}
+    }
 }

@@ -36,5 +36,5 @@ public ResponseEntity<List<MentorResponseDTO>> listarMentores(
     }
 
     return ResponseEntity.ok(mentores);
-}
+    }
 }

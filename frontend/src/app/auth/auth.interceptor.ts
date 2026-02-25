@@ -10,7 +10,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
-    const token = this.authService.getToken(); // ✅ mesma instância do login
+    const token = this.authService.getToken();
 
     if (token) {
       const authReq = req.clone({

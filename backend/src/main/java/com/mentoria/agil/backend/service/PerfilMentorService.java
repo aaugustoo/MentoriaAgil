@@ -22,26 +22,19 @@ public class PerfilMentorService implements PerfilMentorServiceInterface {
         this.userRepository = userRepository;
     }
 
-    // Notação que implica que o método ou faz tudo ou não faz nada, se for interrompido volta ao estágio inicial sem consequências
-    // na snapshot do início do processo
     @Transactional
     public PerfilMentor criarPerfilMentor(User user, String especializacao, String experiencias, String formacao) {
-        // Verifica se o usuário já tem perfil de mentor
         if (user.getPerfilMentor() != null) {
             throw new IllegalStateException("Usuário já possui perfil de mentor");
         }
 
-        // Atualiza a role do usuário para MENTOR
         user.setRole(com.mentoria.agil.backend.model.Role.MENTOR);
-        
-        // Cria o perfil
+
         PerfilMentor perfil = new PerfilMentor(especializacao, experiencias, user);
         perfil.setFormacao(formacao);
-        
-        // Estabelece o relacionamento bidirecional
+
         user.setPerfilMentor(perfil);
-        
-        // Salva o usuário (cascade deve salvar o perfil como consequência)
+
         userRepository.save(user);
         
         return perfil;
@@ -61,22 +54,19 @@ public class PerfilMentorService implements PerfilMentorServiceInterface {
         PerfilMentor perfil = buscarPorId(id);
         User user = perfil.getUser();
         user.setPerfilMentor(null);
-        user.setRole(com.mentoria.agil.backend.model.Role.VISITANTE); // Volta para VISITANTE
+        user.setRole(com.mentoria.agil.backend.model.Role.VISITANTE);
         userRepository.save(user);
         perfilMentorRepository.delete(perfil);
     }
     
     @Transactional
     public PerfilMentor atualizar(User user, PerfilMentor perfil) {
-        // Verifica se o perfil pertence ao usuário
         if (!perfil.getUser().getId().equals(user.getId())) {
             throw new IllegalStateException("Perfil não pertence ao usuário");
         }
-    
-        // Salva o usuário (com nome e email atualizados)
+
         userRepository.save(user);
-    
-        // Salva o perfil atualizado
+
         return perfilMentorRepository.save(perfil);
     }
 }
