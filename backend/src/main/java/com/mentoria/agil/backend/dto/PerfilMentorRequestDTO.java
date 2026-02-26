@@ -25,10 +25,8 @@ public class PerfilMentorRequestDTO {
     
     private String formacao;
 
-    // Construtor padrão
     public PerfilMentorRequestDTO() {}
 
-    // Construtor com parâmetros
     public PerfilMentorRequestDTO(String name, String email, String password, 
                            String especializacao, String experiencias, String formacao) {
         this.name = name;
@@ -39,7 +37,6 @@ public class PerfilMentorRequestDTO {
         this.formacao = formacao;
     }
 
-    // getters e setters
 
     public String getName() {
         return name;

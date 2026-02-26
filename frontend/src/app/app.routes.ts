@@ -22,7 +22,7 @@ export const routes: Routes = [
     path: 'mentor/cadastro',
     loadComponent: () => import('./views/mentor/mentor-form/MentorForm').then(m => m.MentorFormComponent),
     canActivate: [AuthGuard],
-    data: { role: 'MENTOR' } // Segurança extra: só mentores entram aqui
+    data: { role: 'MENTOR' }
   },
   {
     path: 'login',

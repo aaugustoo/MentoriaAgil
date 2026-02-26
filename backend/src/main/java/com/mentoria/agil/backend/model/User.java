@@ -60,7 +60,6 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    // --- LÓGICA DE AUTHORITIES (Unificada: Admin e Mentor) ---
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities(){
         if (this.role == Role.ADMIN) {
@@ -84,7 +83,6 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() { return ativo; }
 
-    // --- GETTERS E SETTERS (Mantendo os seus e os dele) ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

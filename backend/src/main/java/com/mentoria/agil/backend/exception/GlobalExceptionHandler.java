@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
-    // Trata erros lançados manualmente nos serviços (ex: e-mail duplicado)
+    // Trata erros lançados manualmente nos serviços
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<Map<String, String>> handleResponseStatus(ResponseStatusException ex) {
         Map<String, String> error = new HashMap<>();

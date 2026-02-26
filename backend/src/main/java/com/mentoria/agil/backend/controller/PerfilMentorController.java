@@ -32,16 +32,14 @@ public class PerfilMentorController {
                 .getAuthentication().getPrincipal();
         
         User userAutenticado = (User) userDetails;
-        
-        // Cria o perfil de mentor usando o serviço
+
         PerfilMentor perfilSalvo = mentorService.criarPerfilMentor(
             userAutenticado,
             request.getEspecializacao(),
             request.getExperiencias(),
             request.getFormacao()
         );
-        
-        // Converte para DTO e retorna
+
         PerfilMentorResponseDTO response = new PerfilMentorResponseDTO(perfilSalvo);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -71,16 +69,14 @@ public class PerfilMentorController {
         
         PerfilMentor perfil = mentorService.buscarPorId(id);
         User user = perfil.getUser();
-        
-        // Verifica se o usuário autenticado é o dono do perfil
+
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
         
         if (!user.getEmail().equals(userDetails.getUsername())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        
-        // Atualiza dados
+
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         // password tem endpoint separado
@@ -97,7 +93,6 @@ public class PerfilMentorController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarMentor(@PathVariable Long id) {
-        // Verifica se o usuário autenticado é o dono do perfil ou ADMIN
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
         

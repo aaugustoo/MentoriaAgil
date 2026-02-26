@@ -45,24 +45,20 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        // 1. Endpoints Públicos
+                        // endpoints Públicos
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                         
-                        // 2. Endpoints de Mentor (Acesso restrito por Role)
-                        // POST para criar perfil e PUT para editar exigem ROLE_MENTOR
+                        // endpoints de Mentor
                         .requestMatchers(HttpMethod.POST, "/api/mentors/**").hasRole("MENTOR")
                         .requestMatchers(HttpMethod.PUT, "/api/mentors/**").hasRole("MENTOR")
-                        // DELETE exige MENTOR ou ADMIN
                         .requestMatchers(HttpMethod.DELETE, "/api/mentors/**").hasAnyRole("MENTOR", "ADMIN")
-                        // GET de mentores é liberado para qualquer usuário logado (estudantes precisam ver mentores)
                         .requestMatchers(HttpMethod.GET, "/api/mentors/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/users/mentores").authenticated()
                         
-                        // 3. Endpoints de Admin
+                        // edpoints de Admin
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        
-                        // 4. Qualquer outra requisição precisa de autenticação
+
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
