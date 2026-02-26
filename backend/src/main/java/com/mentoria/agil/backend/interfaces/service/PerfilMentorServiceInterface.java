@@ -1,9 +1,9 @@
 package com.mentoria.agil.backend.interfaces.service;
 
+import java.util.List;
+
 import com.mentoria.agil.backend.model.PerfilMentor;
 import com.mentoria.agil.backend.model.User;
-
-import java.util.List;
 
 public interface PerfilMentorServiceInterface {
     public PerfilMentor criarPerfilMentor(User user, String especializacao, String experiencias, String formacao);

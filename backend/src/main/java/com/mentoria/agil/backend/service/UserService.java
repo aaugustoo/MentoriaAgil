@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.mentoria.agil.backend.dto.UserRequestDTO;
 import com.mentoria.agil.backend.dto.response.MentorResponseDTO;
+
+
 import com.mentoria.agil.backend.exception.EmailJaCadastradoException;
 import com.mentoria.agil.backend.interfaces.service.UserServiceInterface;
 import com.mentoria.agil.backend.model.Role;

@@ -1,18 +1,19 @@
 package com.mentoria.agil.backend.facade;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
+import org.springframework.stereotype.Component;
+
 import com.mentoria.agil.backend.controller.AuthController;
 import com.mentoria.agil.backend.dto.LoginDTO;
+import com.mentoria.agil.backend.dto.UserRequestDTO;
 import com.mentoria.agil.backend.dto.response.LoginResponseDTO;
 import com.mentoria.agil.backend.interfaces.facade.AuthFacadeInterface;
 import com.mentoria.agil.backend.interfaces.service.UserServiceInterface;
-import com.mentoria.agil.backend.dto.UserRequestDTO;
 import com.mentoria.agil.backend.model.User;
 import com.mentoria.agil.backend.service.AuthenticationService;
 import com.mentoria.agil.backend.service.TokenBlacklistService;
-import org.springframework.stereotype.Component;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class AuthFacade implements AuthFacadeInterface {

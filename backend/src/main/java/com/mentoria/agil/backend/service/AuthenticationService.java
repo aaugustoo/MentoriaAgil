@@ -1,10 +1,11 @@
 package com.mentoria.agil.backend.service;
 
-import com.mentoria.agil.backend.dto.LoginDTO;
-import com.mentoria.agil.backend.model.User;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.mentoria.agil.backend.dto.LoginDTO;
+import com.mentoria.agil.backend.model.User;
 
 @Service
 public class AuthenticationService {

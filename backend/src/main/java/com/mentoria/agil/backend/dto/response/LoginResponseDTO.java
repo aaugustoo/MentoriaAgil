@@ -1,7 +1,8 @@
 package com.mentoria.agil.backend.dto.response;
 
-import com.mentoria.agil.backend.model.Role;
 import org.springframework.hateoas.RepresentationModel;
+
+import com.mentoria.agil.backend.model.Role;
 
 public class LoginResponseDTO extends RepresentationModel<LoginResponseDTO> {
     private final String token;

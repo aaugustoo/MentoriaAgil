@@ -16,7 +16,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     
     Optional<User> findByEmail(String email);
 
-    // Busca personalizada de mentores
   @Query("SELECT u FROM User u WHERE u.role = :role " +
            "AND (:especialidade IS NULL OR u.especialidade LIKE %:especialidade%) " +
            "AND (:areaInteresse IS NULL OR u.areaInteresse LIKE %:areaInteresse%) " +
