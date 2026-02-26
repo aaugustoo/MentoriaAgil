@@ -45,18 +45,16 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        // endpoints Públicos
+                       
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                         
-                        // endpoints de Mentor
                         .requestMatchers(HttpMethod.POST, "/api/mentors/**").hasRole("MENTOR")
                         .requestMatchers(HttpMethod.PUT, "/api/mentors/**").hasRole("MENTOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/mentors/**").hasAnyRole("MENTOR", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/mentors/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/users/mentores").authenticated()
                         
-                        // edpoints de Admin
                         .requestMatchers("/admin/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated()

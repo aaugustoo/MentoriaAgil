@@ -3,13 +3,14 @@ package com.mentoria.agil.backend.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.mentoria.agil.backend.dto.UserRequestDTO;
-import com.mentoria.agil.backend.dto.response.MentorResponseDTO; 
+import com.mentoria.agil.backend.dto.response.MentorResponseDTO;
+
+
+import com.mentoria.agil.backend.exception.EmailJaCadastradoException;
 import com.mentoria.agil.backend.interfaces.service.UserServiceInterface;
 import com.mentoria.agil.backend.model.Role;
 import com.mentoria.agil.backend.model.User;
@@ -33,7 +34,7 @@ public class UserService implements UserServiceInterface {
     public User salvarUsuario(UserRequestDTO dto) {
         
         if (userRepository.existsByEmail(dto.email())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Este e-mail já está cadastrado.");
+            throw new EmailJaCadastradoException("Este e-mail já está cadastrado.");
         }
 
         User user = new User();
