@@ -19,4 +19,4 @@ RUN touch /tmp/nginx.pid && chown appuser:appgroup /tmp/nginx.pid
 USER appuser
 
 EXPOSE 8081
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["nginx", "-g", "daemon off;", "-c", "/etc/nginx/nginx.conf"]
