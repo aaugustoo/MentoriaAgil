@@ -45,6 +45,7 @@ O projeto segue uma arquitetura moderna dividida em dois módulos:
 * **Linguagem:** [Java 25](https://www.oracle.com/java/technologies/downloads/#java25)
 * **Build Tool:** [Maven](https://maven.apache.org/)
 * **Diretório:** [`/backend`](./backend)
+* **Deploy no Render:** [Mentoria Agil](https://mentoriaagil.onrender.com)
 
 ---
 
