@@ -37,9 +37,7 @@ public class PerfilMentorController {
 
     @PostMapping
     public ResponseEntity<PerfilMentorResponseDTO> criarPerfilMentor(@Valid @RequestBody PerfilMentorRequestDTO request) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
-        
+        UserDetails userDetails = getUsuarioAutenticado();
         User userAutenticado = (User) userDetails;
 
         PerfilMentor perfilSalvo = mentorService.criarPerfilMentor(
@@ -79,8 +77,7 @@ public class PerfilMentorController {
         PerfilMentor perfil = mentorService.buscarPorId(id);
         User user = perfil.getUser();
 
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
+        UserDetails userDetails = getUsuarioAutenticado();
         
         if (!user.getEmail().equals(userDetails.getUsername())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -101,8 +98,7 @@ public class PerfilMentorController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarMentor(@PathVariable Long id) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
+        UserDetails userDetails = getUsuarioAutenticado();
         
         PerfilMentor perfil = mentorService.buscarPorId(id);
         
@@ -115,5 +111,9 @@ public class PerfilMentorController {
         
         mentorService.deletar(id);
         return ResponseEntity.noContent().build();
+    }
+    
+    private UserDetails getUsuarioAutenticado() {
+        return (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }

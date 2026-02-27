@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.mentoria.agil.backend.dto.UserRequestDTO;
 import com.mentoria.agil.backend.dto.response.MentorResponseDTO;
 
-
 import com.mentoria.agil.backend.exception.EmailJaCadastradoException;
 import com.mentoria.agil.backend.interfaces.service.UserServiceInterface;
 import com.mentoria.agil.backend.model.Role;
@@ -25,10 +24,10 @@ public class UserService implements UserServiceInterface {
     private final PerfilMentorRepository perfilMentorRepository;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, PerfilMentorRepository perfilMentorRepository) {
-    this.userRepository = userRepository;
-    this.passwordEncoder = passwordEncoder;
-    this.perfilMentorRepository = perfilMentorRepository; 
-}
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.perfilMentorRepository = perfilMentorRepository; 
+    }
 
     @Override
     public User salvarUsuario(UserRequestDTO dto) {
@@ -54,19 +53,16 @@ public class UserService implements UserServiceInterface {
     }
 
     @Override
-public List<MentorResponseDTO> listarMentores(String especialidade, String areaAtuacao, String tipoMentoria) {
+    public List<MentorResponseDTO> listarMentores(String especialidade, String areaAtuacao, String tipoMentoria) {
     
-    return perfilMentorRepository.findAll().stream()
-            .filter(perfil -> perfil.getUser().isAtivo())
+        return perfilMentorRepository.findAll().stream()
+                .filter(perfil -> perfil.getUser().isAtivo())
 
-            .filter(perfil -> especialidade == null || perfil.getEspecializacao().equalsIgnoreCase(especialidade))
-            .filter(perfil -> areaAtuacao == null || perfil.getUser().getAreaInteresse().equalsIgnoreCase(areaAtuacao))
-            .filter(perfil -> tipoMentoria == null || perfil.getUser().getTipoMentoria().equalsIgnoreCase(tipoMentoria))
+                .filter(perfil -> especialidade == null || perfil.getEspecializacao().equalsIgnoreCase(especialidade))
+                .filter(perfil -> areaAtuacao == null || perfil.getUser().getAreaInteresse().equalsIgnoreCase(areaAtuacao))
+                .filter(perfil -> tipoMentoria == null || perfil.getUser().getTipoMentoria().equalsIgnoreCase(tipoMentoria))
 
-            .map(MentorResponseDTO::new)
-
-            .sorted((m1, m2) -> m1.nome().compareToIgnoreCase(m2.nome()))
-            
-            .collect(Collectors.toList());
+                .map(MentorResponseDTO::new)
+                .collect(Collectors.toList());
     }
 }
