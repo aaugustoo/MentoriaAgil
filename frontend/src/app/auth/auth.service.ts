@@ -13,24 +13,27 @@ export class AuthService {
 
   private readonly API_URL = 'http://localhost:8080/auth';
 
+  private readonly TOKEN_KEY = 'auth_token';
+  private readonly USER_KEY = 'auth_user';
+
   private currentUserSubject = new BehaviorSubject<User | null>(this.loadUser());
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
   login(email: string, password: string): Observable<boolean> {
-  const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
-  return this.http.post<{ token: string }>(
-    `${this.API_URL}/login`, 
-    { email, password }, 
-    { headers } 
-  ).pipe(
-    tap(response => this.handleAuthentication(response.token)),
-    map(() => true),
-    catchError(() => of(false))
-  );
-}
+    return this.http.post<{ token: string }>(
+      `${this.API_URL}/login`, 
+      { email, password }, 
+      { headers } 
+    ).pipe(
+      tap(response => this.handleAuthentication(response.token)),
+      map(() => true),
+      catchError(() => of(false))
+    );
+  }
 
   register(user: User): Observable<any> {
     return this.http.post(`${this.API_URL}/register`, user);
@@ -41,23 +44,24 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('auth_user');
+    
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.USER_KEY);
     this.currentUserSubject.next(null);
   }
 
   isAuthenticated(): boolean {
-  const token = this.getToken();
-  if (!token) return false;
+    const token = this.getToken();
+    if (!token) return false;
 
-  try {
-    const decoded: any = jwtDecode(token);
-    const isExpired = decoded.exp * 1000 < Date.now();
-    return !isExpired;
-  } catch {
-    return false;
+    try {
+      const decoded: any = jwtDecode(token);
+      const isExpired = decoded.exp * 1000 < Date.now();
+      return !isExpired;
+    } catch {
+      return false;
+    }
   }
-}
 
   hasRole(allowedRoles: string | string[]): boolean {
     const user = this.currentUserSubject.value;
@@ -70,11 +74,11 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem('auth_token');
+    return localStorage.getItem(this.TOKEN_KEY);
   }
 
   private handleAuthentication(token: string): void {
-    try{
+    try {
       const decoded: any = jwtDecode(token);
 
       const user: User = {
@@ -85,17 +89,17 @@ export class AuthService {
         token: token
       };
 
-      localStorage.setItem('auth_token', token);
-      localStorage.setItem('auth_user', JSON.stringify(user));
+      localStorage.setItem(this.TOKEN_KEY, token);
+      localStorage.setItem(this.USER_KEY, JSON.stringify(user));
 
       this.currentUserSubject.next(user);
-    } catch (error){
+    } catch (error) {
       console.error('Erro ao decodificar token', error);
     }
   }
 
   private loadUser(): User | null {
-    const storedUser = localStorage.getItem('auth_user');
+    const storedUser = localStorage.getItem(this.USER_KEY);
     return storedUser ? JSON.parse(storedUser) : null;
   }
 }
