@@ -85,3 +85,66 @@ ng serve
 * **Status:** ✅ Configuração Inicial Concluída
 
 ---
+
+---
+
+## 🌎 Gestão de Ambientes
+
+O backend do sistema foi configurado com múltiplos perfis de execução para suportar os diferentes ambientes de desenvolvimento, testes e produção:
+
+| Ambiente | Perfil Spring | Arquivo de Configuração | Descrição |
+|----------|---------------|--------------------------|-----------|
+| Desenvolvimento | dev | application.properties | Execução local |
+| Testes | test | application-test.properties | Utilizado no GitHub Actions com banco H2 em memória |
+| Produção | prod | application-prod.properties | Deploy no Render com PostgreSQL |
+
+A ativação do perfil é realizada através da variável de ambiente:
+
+SPRING_PROFILES_ACTIVE
+
+---
+
+---
+
+### 🧪 Ambiente de Testes
+
+O ambiente de testes é utilizado durante a execução do pipeline de Integração Contínua (CI) no GitHub Actions.
+
+Nesse ambiente:
+
+- O perfil `test` é ativado automaticamente;
+- Utiliza-se o banco de dados H2 em memória;
+- As configurações são carregadas a partir do arquivo:
+
+backend/src/main/resources/application-test.properties
+
+---
+
+---
+
+### 🚀 Ambiente de Produção
+
+O ambiente de produção está implantado na plataforma Render, utilizando:
+
+- Perfil Spring: `prod`
+- Banco de Dados: PostgreSQL (Render)
+- Variáveis de ambiente para conexão segura com o banco de dados
+- Configurações carregadas a partir do arquivo:
+
+backend/src/main/resources/application-prod.properties
+
+---
+
+---
+
+## 🌐 Deploy em Produção
+
+O sistema encontra-se implantado na plataforma Render:
+
+### 🔗 Backend
+https://mentoria-agil-backend.onrender.com
+
+### 🎨 Frontend
+https://URL-DO-FRONTEND.onrender.com
+
+---
