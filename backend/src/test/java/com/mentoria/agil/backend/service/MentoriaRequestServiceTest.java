@@ -56,7 +56,6 @@ class MentoriaRequestServiceTest {
 
         @Test
     void deveCriarSolicitacaoComSucesso() {
-        // Arrange
         when(userRepository.findById(2L)).thenReturn(Optional.of(mentor));
         when(requestRepository.existsByMentoradoAndMentorAndStatus(mentorado, mentor, MentoriaStatus.PENDING))
                 .thenReturn(false);
@@ -66,10 +65,8 @@ class MentoriaRequestServiceTest {
             return request;
         });
 
-        // Act
         MentoriaRequest result = requestService.createRequest(mentorado, dto);
 
-        // Assert
         assertNotNull(result);
         assertEquals(10L, result.getId());
         assertEquals(mentorado, result.getMentorado());
@@ -86,11 +83,9 @@ class MentoriaRequestServiceTest {
 
     @Test
     void deveLancarExcecaoQuandoMentorNaoEncontrado() {
-        // Arrange
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
         dto.setMentorId(99L);
 
-        // Act & Assert
         assertThrows(EntityNotFoundException.class, () -> requestService.createRequest(mentorado, dto));
 
         verify(userRepository, times(1)).findById(99L);
@@ -100,11 +95,9 @@ class MentoriaRequestServiceTest {
 
     @Test
     void deveLancarExcecaoQuandoAutoMentoria() {
-        // Arrange
         dto.setMentorId(1L); // mesmo ID do mentorado
         when(userRepository.findById(1L)).thenReturn(Optional.of(mentorado)); // mentorado encontrado, mas é o mesmo
 
-        // Act & Assert
         BusinessException exception = assertThrows(BusinessException.class,
                 () -> requestService.createRequest(mentorado, dto));
         assertEquals("Você não pode solicitar mentoria para si mesmo", exception.getMessage());
@@ -116,7 +109,6 @@ class MentoriaRequestServiceTest {
 
     @Test
     void deveLancarExcecaoQuandoUsuarioNaoForMentor() {
-        // Arrange
         User usuarioComum = new User("Pedro", "pedro@email.com", "senha");
         usuarioComum.setId(3L);
         usuarioComum.setRole(Role.USER); // não é mentor
@@ -124,7 +116,6 @@ class MentoriaRequestServiceTest {
         dto.setMentorId(3L);
         when(userRepository.findById(3L)).thenReturn(Optional.of(usuarioComum));
 
-        // Act & Assert
         BusinessException exception = assertThrows(BusinessException.class,
                 () -> requestService.createRequest(mentorado, dto));
         assertEquals("O usuário selecionado não é um mentor", exception.getMessage());
@@ -136,12 +127,10 @@ class MentoriaRequestServiceTest {
 
     @Test
     void deveLancarExcecaoQuandoSolicitacaoPendenteJaExiste() {
-        // Arrange
         when(userRepository.findById(2L)).thenReturn(Optional.of(mentor));
         when(requestRepository.existsByMentoradoAndMentorAndStatus(mentorado, mentor, MentoriaStatus.PENDING))
                 .thenReturn(true); // já existe pendente
 
-        // Act & Assert
         BusinessException exception = assertThrows(BusinessException.class,
                 () -> requestService.createRequest(mentorado, dto));
         assertEquals("Já existe uma solicitação pendente para este mentor", exception.getMessage());
