@@ -2,14 +2,14 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MentorListComponent } from './mentor-list.component';
 import { PerfilMentorService } from '../../services/perfil-mentor.service';
 import { of } from 'rxjs';
+import { vi, describe, beforeEach, it, expect } from 'vitest';
 
 describe('MentorListComponent', () => {
-
   let component: MentorListComponent;
   let fixture: ComponentFixture<MentorListComponent>;
 
   const mockService = {
-    buscarMentores: jasmine.createSpy().and.returnValue(of([
+    buscarMentores: vi.fn().mockReturnValue(of([
       {
         id: 1,
         name: 'Carlos',
@@ -34,7 +34,6 @@ describe('MentorListComponent', () => {
   };
 
   beforeEach(async () => {
-
     await TestBed.configureTestingModule({
       imports: [MentorListComponent],
       providers: [
@@ -52,5 +51,4 @@ describe('MentorListComponent', () => {
     const cards = compiled.querySelectorAll('.mentor-card');
     expect(cards.length).toBe(2);
   });
-
 });

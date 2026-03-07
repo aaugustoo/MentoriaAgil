@@ -44,7 +44,7 @@ jobs:
         run: npm run lint --if-present
 
       - name: Run Tests
-        run: npm test -- --run
+        run: npm test --run
 
 
   # =========================
