@@ -1,12 +1,16 @@
 package com.mentoria.agil.backend.service;
 
 import java.util.Date;
+
 import javax.crypto.SecretKey;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.mentoria.agil.backend.interfaces.service.TokenServiceInterface;
 import com.mentoria.agil.backend.model.User;
+
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -27,36 +31,32 @@ public class JwtService implements TokenServiceInterface {
                 .subject(user.getEmail())
                 .claim("role", user.getRole())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 86400000)) // 24h
+                .expiration(new Date(System.currentTimeMillis() + 86400000)) 
                 .signWith(getSigningKey())
                 .compact();
     }
 
-    @Override
-    public String getSubjectFromToken(String token) {
+    private Claims getClaimsFromToken(String token) {
         try {
             return Jwts.parser()
                     .verifyWith(getSigningKey())
                     .build()
                     .parseSignedClaims(token)
-                    .getPayload()
-                    .getSubject();
+                    .getPayload();
         } catch (JwtException e) {
             return null;
         }
     }
 
     @Override
+    public String getSubjectFromToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        return claims != null ? claims.getSubject() : null;
+    }
+
+    @Override
     public Date getExpirationFromToken(String token) {
-        try {
-            return Jwts.parser()
-                    .verifyWith(getSigningKey())
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload()
-                    .getExpiration();
-        } catch (JwtException e) {
-            return new Date(0); // Já expirado
-        }
+        Claims claims = getClaimsFromToken(token);
+        return claims != null ? claims.getExpiration() : new Date(0);
     }
 }
