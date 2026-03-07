@@ -47,13 +47,18 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                        
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                        
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                         
                         .requestMatchers(HttpMethod.POST, "/api/mentors/**").hasRole("MENTOR")
                         .requestMatchers(HttpMethod.PUT, "/api/mentors/**").hasRole("MENTOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/mentors/**").hasAnyRole("MENTOR", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/mentors/**").authenticated()
+
                         .requestMatchers(HttpMethod.GET, "/api/users/mentores").authenticated()
+
+                        .requestMatchers(HttpMethod.POST, "/api/mentorships/request").hasRole("ESTUDANTE")
+                        .requestMatchers(HttpMethod.POST, "/api/sessoes/*/feedback").hasRole("ESTUDANTE")
                         
                         .requestMatchers("/admin/**").hasRole("ADMIN")
 
