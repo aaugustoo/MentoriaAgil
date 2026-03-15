@@ -131,11 +131,12 @@
 				<version>0.8.13</version>
 				<configuration>
 					<excludes>
-						<exclude>java/**</exclude>
-						<exclude>javax/**</exclude>
-						<exclude>jdk/**</exclude>
-						<exclude>com/mentoria/agil/backend/model/*$Hibernate*</exclude>
-						<exclude>com/mentoria/agil/backend/model/Feedback$HibernateProxy*</exclude>
+						<exclude>com/mentoria/agil/backend/model/**</exclude>
+						<exclude>com/mentoria/agil/backend/controller/**</exclude>
+						<exclude>com/mentoria/agil/backend/config/**</exclude>
+						<exclude>com/mentoria/agil/backend/facade/**</exclude>
+						<exclude>com/mentoria/agil/backend/BackendApplication.class</exclude>
+						<exclude>**/interfaces/**</exclude>
 						<exclude>**/dto/**</exclude>
 						<exclude>**/exception/**</exclude>
 					</excludes>
