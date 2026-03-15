@@ -11,6 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import com.mentoria.agil.backend.dto.MentoriaRequestUpdateDTO;
+import com.mentoria.agil.backend.dto.response.MentoriaRequestListResponseDTO;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/mentorias")
@@ -31,5 +35,28 @@ public class MentoriaRequestController {
         MentoriaRequest request = requestService.createRequest(mentorado, dto);
         MentoriaResponseDTO response = new MentoriaResponseDTO(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/pendentes")
+    public ResponseEntity<List<MentoriaRequestListResponseDTO>> listarPendentes() {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+        User mentor = (User) userDetails;
+
+        List<MentoriaRequest> requests = requestService.listarPendentes(mentor);
+        List<MentoriaRequestListResponseDTO> dtos = requests.stream()
+                .map(MentoriaRequestListResponseDTO::new)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<MentoriaResponseDTO> atualizarStatus(@PathVariable Long id, @Valid @RequestBody MentoriaRequestUpdateDTO dto) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User mentor = (User) userDetails;
+
+        MentoriaRequest request = requestService.atualizarStatus(id, mentor, dto);
+        MentoriaResponseDTO response = new MentoriaResponseDTO(request);
+        return ResponseEntity.ok(response);
     }
 }

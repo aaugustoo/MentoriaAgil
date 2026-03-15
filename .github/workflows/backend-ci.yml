@@ -1,14 +1,17 @@
-name: CI - Build, Testes e Cobertura
+name: CI Backend - Mentoria Ágil
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main, desenvolvimento, correcao-bugs ]
+    
   pull_request:
-    branches:
-      - main
+    branches: [ main, desenvolvimento, correcao-bugs ]
 
-jobs:
+defaults:
+  run:
+    working-directory: backend
+
+jobs:        
   build:
     runs-on: ubuntu-latest
 

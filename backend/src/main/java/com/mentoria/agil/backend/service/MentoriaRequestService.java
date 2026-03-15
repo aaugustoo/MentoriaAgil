@@ -1,6 +1,7 @@
 package com.mentoria.agil.backend.service;
 
 import com.mentoria.agil.backend.dto.MentoriaRequestDTO;
+import com.mentoria.agil.backend.dto.MentoriaRequestUpdateDTO;
 import com.mentoria.agil.backend.exception.BusinessException;
 import com.mentoria.agil.backend.model.MentoriaRequest;
 import com.mentoria.agil.backend.model.MentoriaStatus;
@@ -12,6 +13,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import com.mentoria.agil.backend.interfaces.service.MentoriaRequestServiceInterface;
+import java.util.List;
 
 @Service
 public class MentoriaRequestService implements MentoriaRequestServiceInterface {
@@ -53,6 +55,35 @@ public class MentoriaRequestService implements MentoriaRequestServiceInterface {
         request.setMentor(mentor);
         request.setMessage(dto.getMessage());
         request.setStatus(MentoriaStatus.PENDING);
+
+        return requestRepository.save(request);
+    }
+
+    @Override
+    public List<MentoriaRequest> listarPendentes(User mentor) {
+        return requestRepository.findByMentorAndStatusOrderByCreatedAtDesc(mentor, MentoriaStatus.PENDING);
+    }
+
+    @Override
+    @Transactional
+    public MentoriaRequest atualizarStatus(Long requestId, User mentor, MentoriaRequestUpdateDTO dto) {
+        MentoriaRequest request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new EntityNotFoundException("Solicitação não encontrada"));
+        
+        if (!request.getMentor().getId().equals(mentor.getId())) {
+            throw new BusinessException("Você não tem permissão para alterar esta solicitação");
+        }
+       
+        if (request.getStatus() != MentoriaStatus.PENDING) {
+            throw new BusinessException("Esta solicitação já foi processada");
+        }
+
+        request.setStatus(dto.getStatus());
+
+        // Quando recusar, guarda justificativa
+        if (dto.getStatus() == MentoriaStatus.REJECTED && dto.getJustificativa() != null) {
+            request.setJustificativaRecusa(dto.getJustificativa());
+        }
 
         return requestRepository.save(request);
     }

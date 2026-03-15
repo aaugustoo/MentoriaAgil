@@ -1,6 +1,7 @@
 package com.mentoria.agil.backend.service;
 
 import com.mentoria.agil.backend.dto.MentoriaRequestDTO;
+import com.mentoria.agil.backend.dto.MentoriaRequestUpdateDTO;
 import com.mentoria.agil.backend.exception.BusinessException;
 import com.mentoria.agil.backend.model.MentoriaRequest;
 import com.mentoria.agil.backend.model.MentoriaStatus;
@@ -16,6 +17,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,7 +27,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class MentoriaRequestServiceTest {
-    
+
     @Mock
     private MentoriaRequestRepository requestRepository;
 
@@ -37,30 +40,50 @@ class MentoriaRequestServiceTest {
     private User mentorado;
     private User mentor;
     private MentoriaRequestDTO dto;
+    private MentoriaRequest requestPendente;
+    private MentoriaRequest requestAceita;
 
     @BeforeEach
     void setUp() {
         mentorado = new User("João", "joao@email.com", "senha123");
         mentorado.setId(1L);
-        mentorado.setRole(Role.USER); // mentorado comum
+        mentorado.setRole(Role.USER);
 
         mentor = new User("Maria", "maria@email.com", "senha456");
         mentor.setId(2L);
-        mentor.setRole(Role.MENTOR); // mentor
+        mentor.setRole(Role.MENTOR);
 
         dto = new MentoriaRequestDTO();
         dto.setMentorId(2L);
         dto.setMessage("Quero ser mentorado por você.");
+
+        requestPendente = new MentoriaRequest();
+        requestPendente.setId(10L);
+        requestPendente.setMentorado(mentorado);
+        requestPendente.setMentor(mentor);
+        requestPendente.setMessage("Quero mentoria");
+        requestPendente.setStatus(MentoriaStatus.PENDING);
+        requestPendente.setCreatedAt(LocalDateTime.now());
+        requestPendente.setUpdatedAt(LocalDateTime.now());
+
+        requestAceita = new MentoriaRequest();
+        requestAceita.setId(20L);
+        requestAceita.setMentorado(mentorado);
+        requestAceita.setMentor(mentor);
+        requestAceita.setMessage("Outra solicitação");
+        requestAceita.setStatus(MentoriaStatus.ACCEPTED);
+        requestAceita.setCreatedAt(LocalDateTime.now());
+        requestAceita.setUpdatedAt(LocalDateTime.now());
     }
 
-        @Test
+    @Test
     void deveCriarSolicitacaoComSucesso() {
         when(userRepository.findById(2L)).thenReturn(Optional.of(mentor));
         when(requestRepository.existsByMentoradoAndMentorAndStatus(mentorado, mentor, MentoriaStatus.PENDING))
                 .thenReturn(false);
         when(requestRepository.save(any(MentoriaRequest.class))).thenAnswer(invocation -> {
             MentoriaRequest request = invocation.getArgument(0);
-            request.setId(10L); // simula ID gerado
+            request.setId(10L);
             return request;
         });
 
@@ -94,8 +117,8 @@ class MentoriaRequestServiceTest {
 
     @Test
     void deveLancarExcecaoQuandoAutoMentoria() {
-        dto.setMentorId(1L); // mesmo ID do mentorado
-        when(userRepository.findById(1L)).thenReturn(Optional.of(mentorado)); // mentorado encontrado, mas é o mesmo
+        dto.setMentorId(1L);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mentorado));
 
         BusinessException exception = assertThrows(BusinessException.class,
                 () -> requestService.createRequest(mentorado, dto));
@@ -110,7 +133,7 @@ class MentoriaRequestServiceTest {
     void deveLancarExcecaoQuandoUsuarioNaoForMentor() {
         User usuarioComum = new User("Pedro", "pedro@email.com", "senha");
         usuarioComum.setId(3L);
-        usuarioComum.setRole(Role.USER); // não é mentor
+        usuarioComum.setRole(Role.USER);
 
         dto.setMentorId(3L);
         when(userRepository.findById(3L)).thenReturn(Optional.of(usuarioComum));
@@ -128,7 +151,7 @@ class MentoriaRequestServiceTest {
     void deveLancarExcecaoQuandoSolicitacaoPendenteJaExiste() {
         when(userRepository.findById(2L)).thenReturn(Optional.of(mentor));
         when(requestRepository.existsByMentoradoAndMentorAndStatus(mentorado, mentor, MentoriaStatus.PENDING))
-                .thenReturn(true); // já existe pendente
+                .thenReturn(true);
 
         BusinessException exception = assertThrows(BusinessException.class,
                 () -> requestService.createRequest(mentorado, dto));
@@ -136,6 +159,123 @@ class MentoriaRequestServiceTest {
 
         verify(userRepository, times(1)).findById(2L);
         verify(requestRepository, times(1)).existsByMentoradoAndMentorAndStatus(mentorado, mentor, MentoriaStatus.PENDING);
+        verify(requestRepository, never()).save(any());
+    }
+
+    @Test
+    void deveListarPendentes() {
+        when(requestRepository.findByMentorAndStatusOrderByCreatedAtDesc(mentor, MentoriaStatus.PENDING))
+                .thenReturn(List.of(requestPendente));
+
+        List<MentoriaRequest> resultado = requestService.listarPendentes(mentor);
+
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+        assertEquals(requestPendente.getId(), resultado.get(0).getId());
+
+        verify(requestRepository, times(1)).findByMentorAndStatusOrderByCreatedAtDesc(mentor, MentoriaStatus.PENDING);
+    }
+
+    @Test
+    void deveAceitarSolicitacaoComSucesso() {
+        MentoriaRequestUpdateDTO dto = new MentoriaRequestUpdateDTO();
+        dto.setStatus(MentoriaStatus.ACCEPTED);
+
+        when(requestRepository.findById(10L)).thenReturn(Optional.of(requestPendente));
+        when(requestRepository.save(any(MentoriaRequest.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        MentoriaRequest resultado = requestService.atualizarStatus(10L, mentor, dto);
+
+        assertNotNull(resultado);
+        assertEquals(MentoriaStatus.ACCEPTED, resultado.getStatus());
+        assertNull(resultado.getJustificativaRecusa());
+
+        verify(requestRepository, times(1)).findById(10L);
+        verify(requestRepository, times(1)).save(requestPendente);
+    }
+
+    @Test
+    void deveRecusarSolicitacaoComJustificativa() {
+        MentoriaRequestUpdateDTO dto = new MentoriaRequestUpdateDTO();
+        dto.setStatus(MentoriaStatus.REJECTED);
+        dto.setJustificativa("Mentor sem disponibilidade");
+
+        when(requestRepository.findById(10L)).thenReturn(Optional.of(requestPendente));
+        when(requestRepository.save(any(MentoriaRequest.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        MentoriaRequest resultado = requestService.atualizarStatus(10L, mentor, dto);
+
+        assertNotNull(resultado);
+        assertEquals(MentoriaStatus.REJECTED, resultado.getStatus());
+        assertEquals("Mentor sem disponibilidade", resultado.getJustificativaRecusa());
+
+        verify(requestRepository, times(1)).findById(10L);
+        verify(requestRepository, times(1)).save(requestPendente);
+    }
+
+    @Test
+    void deveRecusarSolicitacaoSemJustificativa() {
+        MentoriaRequestUpdateDTO dto = new MentoriaRequestUpdateDTO();
+        dto.setStatus(MentoriaStatus.REJECTED);
+
+        when(requestRepository.findById(10L)).thenReturn(Optional.of(requestPendente));
+        when(requestRepository.save(any(MentoriaRequest.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        MentoriaRequest resultado = requestService.atualizarStatus(10L, mentor, dto);
+
+        assertNotNull(resultado);
+        assertEquals(MentoriaStatus.REJECTED, resultado.getStatus());
+        assertNull(resultado.getJustificativaRecusa());
+
+        verify(requestRepository, times(1)).findById(10L);
+        verify(requestRepository, times(1)).save(requestPendente);
+    }
+
+    @Test
+    void deveLancarExcecaoQuandoMentorNaoTemPermissao() {
+        User outroMentor = new User("Outro", "outro@email.com", "senha");
+        outroMentor.setId(99L);
+        outroMentor.setRole(Role.MENTOR);
+
+        MentoriaRequestUpdateDTO dto = new MentoriaRequestUpdateDTO();
+        dto.setStatus(MentoriaStatus.ACCEPTED);
+
+        when(requestRepository.findById(10L)).thenReturn(Optional.of(requestPendente));
+
+        BusinessException exception = assertThrows(BusinessException.class,
+                () -> requestService.atualizarStatus(10L, outroMentor, dto));
+        assertEquals("Você não tem permissão para alterar esta solicitação", exception.getMessage());
+
+        verify(requestRepository, times(1)).findById(10L);
+        verify(requestRepository, never()).save(any());
+    }
+
+    @Test
+    void deveLancarExcecaoQuandoSolicitacaoJaProcessada() {
+        MentoriaRequestUpdateDTO dto = new MentoriaRequestUpdateDTO();
+        dto.setStatus(MentoriaStatus.ACCEPTED);
+
+        when(requestRepository.findById(20L)).thenReturn(Optional.of(requestAceita));
+
+        BusinessException exception = assertThrows(BusinessException.class,
+                () -> requestService.atualizarStatus(20L, mentor, dto));
+        assertEquals("Esta solicitação já foi processada", exception.getMessage());
+
+        verify(requestRepository, times(1)).findById(20L);
+        verify(requestRepository, never()).save(any());
+    }
+
+    @Test
+    void deveLancarExcecaoQuandoSolicitacaoNaoEncontrada() {
+        MentoriaRequestUpdateDTO dto = new MentoriaRequestUpdateDTO();
+        dto.setStatus(MentoriaStatus.ACCEPTED);
+
+        when(requestRepository.findById(999L)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class,
+                () -> requestService.atualizarStatus(999L, mentor, dto));
+
+        verify(requestRepository, times(1)).findById(999L);
         verify(requestRepository, never()).save(any());
     }
 }

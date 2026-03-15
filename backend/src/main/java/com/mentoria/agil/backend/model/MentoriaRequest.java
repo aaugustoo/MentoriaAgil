@@ -31,6 +31,9 @@ public class MentoriaRequest {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(length = 500)
+    private String justificativaRecusa;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -86,8 +89,24 @@ public class MentoriaRequest {
         return createdAt;
     }
 
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+    
+    public String getJustificativaRecusa() {
+        return justificativaRecusa;
+    }
+
+    public void setJustificativaRecusa(String justificativaRecusa) {
+        this.justificativaRecusa = justificativaRecusa;
     }
 
 }
