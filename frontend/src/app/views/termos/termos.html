@@ -1,0 +1,50 @@
+<div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 font-display">
+  <div class="max-w-3xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-200">
+    <div class="bg-blue-600 p-8 text-white">
+      <h1 class="text-3xl font-bold">Termos de Serviço</h1>
+      <p class="text-blue-100 mt-2 text-sm">Última atualização: Fevereiro de 2026</p>
+    </div>
+
+    <div class="p-8 prose prose-blue max-w-none text-gray-700 leading-relaxed space-y-6 text-left">
+      <section>
+        <h2 class="text-xl font-bold text-gray-900 border-b pb-2 mb-4">1. Aceitação dos Termos</h2>
+        <p>Ao se cadastrar no <strong>Portal de Mentoria da UFAPE</strong>, você concorda em cumprir estes termos, todas as leis e regulamentos aplicáveis. Se você não concordar com algum destes termos, está proibido de usar ou acessar este site.</p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-gray-900 border-b pb-2 mb-4">2. Elegibilidade e Cadastro</h2>
+        <ul class="list-disc pl-5 space-y-2">
+          <li><strong>Vínculo Institucional:</strong> O uso desta plataforma é restrito a membros da comunidade acadêmica da UFAPE.</li>
+          <li><strong>E-mail:</strong> É obrigatório o uso do e-mail institucional (@ufape.edu.br) para validação da conta.</li>
+          <li><strong>Veracidade:</strong> O usuário compromete-se a fornecer dados reais durante o cadastro.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-gray-900 border-b pb-2 mb-4">3. Conduta do Usuário</h2>
+        <p>A plataforma visa o crescimento acadêmico e profissional. Espera-se que mentores e estudantes mantenham uma conduta ética, respeitosa e profissional em todas as interações. É proibido:</p>
+        <ul class="list-disc pl-5 space-y-2 mt-2">
+          <li>Uso de linguagem ofensiva ou discriminatória.</li>
+          <li>Compartilhamento de material protegido por direitos autorais sem autorização.</li>
+          <li>Uso da plataforma para fins comerciais não autorizados.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-bold text-gray-900 border-b pb-2 mb-4">4. Privacidade e Dados</h2>
+        <p>Seus dados são coletados exclusivamente para possibilitar o match entre mentores e estudantes e para comunicações internas do projeto de Mentoria Agil da UFAPE.</p>
+      </section>
+
+      <div class="mt-10 pt-6 border-t border-gray-100 flex justify-between items-center">
+        <a routerLink="/cadastro" class="text-blue-600 font-bold hover:underline flex items-center gap-2">
+          <span class="material-icons-round text-sm">arrow_back</span>
+          Voltar para o Cadastro
+        </a>
+        <button (click)="imprimirTermos()" class="text-gray-400 hover:text-gray-600 flex items-center gap-2 text-sm">
+          <span class="material-icons-round text-sm">print</span>
+          Imprimir
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
