@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { PerfilMentorService } from '../../services/perfil-mentor.service';
 import { PerfilMentor } from '../../models/PerfilMentor';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { SolicitacaoMentoriaModalComponent } from './mentoria/solicitacao-mentoria-modal.component';
 
 @Component({
   selector: 'app-mentor-list',
@@ -22,7 +24,7 @@ export class MentorListComponent implements OnInit {
     ordenacao: ''
   };
 
-  constructor(private mentorService: PerfilMentorService) {}
+  constructor(private mentorService: PerfilMentorService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.buscar();
@@ -44,5 +46,18 @@ export class MentorListComponent implements OnInit {
 
   onFiltroChange() {
     this.buscar();
+  }
+
+  solicitarMentoria(mentor: PerfilMentor): void {
+    const dialogRef = this.dialog.open(SolicitacaoMentoriaModalComponent, {
+      width: '500px',
+      data: { mentor }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Solicitação enviada com sucesso');
+      }
+    });
   }
 }
