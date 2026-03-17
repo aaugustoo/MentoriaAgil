@@ -22,7 +22,7 @@ import { PerfilMentor } from '../../models/PerfilMentor';
     MatSnackBarModule
   ],
   templateUrl: './solicitacao-mentoria-modal.component.html',
-  styleUrls: ['./solicitacao-mentoria-modal.css']
+  styleUrls: ['./solicitacao-mentoria-modal.component.css']
 })
 export class SolicitacaoMentoriaModalComponent {
   private readonly fb: FormBuilder = inject(FormBuilder);
