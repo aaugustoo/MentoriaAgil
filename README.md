@@ -142,9 +142,9 @@ backend/src/main/resources/application-prod.properties
 O sistema encontra-se implantado na plataforma Render:
 
 ### 🔗 Backend
-https://mentoria-agil-backend.onrender.com
+[https://mentoria-agil-backend-1f3r.onrender.com](https://mentoria-agil-backend-1f3r.onrender.com)
 
 ### 🎨 Frontend
-https://URL-DO-FRONTEND.onrender.com
+[https://mentoria-agil-frontend.onrender.com](https://mentoria-agil-frontend.onrender.com)
 
 ---
