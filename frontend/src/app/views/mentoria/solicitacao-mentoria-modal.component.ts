@@ -56,7 +56,7 @@ export class SolicitacaoMentoriaModalComponent {
         this.snackBar.open('Solicitação enviada com sucesso!', 'Fechar', { duration: 3000 });
         this.dialogRef.close(true);
       },
-      error: (err) => {
+      error: (err: any) => {
         this.loading = false;
         const mensagem = err.error?.error || 'Erro ao enviar solicitação. Tente novamente.';
         this.snackBar.open(mensagem, 'Fechar', { duration: 5000 });
