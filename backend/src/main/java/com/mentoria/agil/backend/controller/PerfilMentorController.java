@@ -1,20 +1,11 @@
 package com.mentoria.agil.backend.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.mentoria.agil.backend.dto.PerfilMentorRequestDTO;
 import com.mentoria.agil.backend.dto.response.PerfilMentorListResponseDTO;
@@ -57,7 +48,7 @@ public class PerfilMentorController {
         
         List<PerfilMentorListResponseDTO> response = mentores.stream()
             .map(PerfilMentorListResponseDTO::new)
-            .collect(Collectors.toList());
+            .toList();
             
         return ResponseEntity.ok(response);
     }
@@ -90,7 +81,6 @@ public class PerfilMentorController {
         perfil.setExperiencias(request.getExperiencias());
         perfil.setFormacao(request.getFormacao());
         
-
         PerfilMentor perfilAtualizado = mentorService.atualizar(user, perfil);
         PerfilMentorResponseDTO response = new PerfilMentorResponseDTO(perfilAtualizado);
         return ResponseEntity.ok(response);
@@ -99,7 +89,6 @@ public class PerfilMentorController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarMentor(@PathVariable Long id) {
         UserDetails userDetails = getUsuarioAutenticado();
-        
         PerfilMentor perfil = mentorService.buscarPorId(id);
         
         boolean isAdmin = userDetails.getAuthorities().stream()
