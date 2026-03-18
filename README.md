@@ -150,5 +150,8 @@ O sistema encontra-se implantado na plataforma Render:
 [https://mentoria-agil-frontend.onrender.com](https://mentoria-agil-frontend.onrender.com)
 
 ### Service Status Page
-https://stats.uptimerobot.com/u5ZyVIiXk0
+#### https://stats.uptimerobot.com/u5ZyVIiXk0
+
+### Actions Status Badge
+[![CI Backend - Mentoria Ágil](https://github.com/ThaysonScript/MentoriaAgil/actions/workflows/backend-ci.yml/badge.svg?branch=main)](https://github.com/ThaysonScript/MentoriaAgil/actions/workflows/backend-ci.yml)
 ---
