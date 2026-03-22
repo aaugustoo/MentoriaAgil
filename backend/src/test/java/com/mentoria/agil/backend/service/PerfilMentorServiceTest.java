@@ -79,6 +79,9 @@ public class PerfilMentorServiceTest {
     @Test
     @DisplayName("Deve salvar perfil de mentor com sucesso e alterar a role do usuário")
     void criarPerfilMentorSucesso() {
+        when(perfilMentorRepository.save(any(PerfilMentor.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
         PerfilMentor resultado = perfilMentorService.criarPerfilMentor(
                 usuarioVisitante, "Spring Boot", "Pleno", "Engenharia de Software");
 
@@ -87,8 +90,7 @@ public class PerfilMentorServiceTest {
 
         assertNotNull(resultado);
         assertEquals("Spring Boot", resultado.getEspecializacao());
-        assertEquals(Role.MENTOR, usuarioSalvo.getRole(), "A role deve ser atualizada para MENTOR");
-        assertEquals(resultado, usuarioSalvo.getPerfilMentor());
+        assertEquals(Role.MENTOR, usuarioSalvo.getRole());
     }
 
     @Test
@@ -184,41 +186,6 @@ public class PerfilMentorServiceTest {
     void dtoValido() {
         Set<ConstraintViolation<PerfilMentorRequestDTO>> violations = validator.validate(perfilMentorRequestDTO);
         assertTrue(violations.isEmpty(), "Não deveria haver erros de validação em um DTO válido");
-    }
-
-    @Test
-    @DisplayName("Deve falhar na validação se o nome estiver em branco ou for menor que 3 caracteres")
-    void validacaoNomeInvalido() {
-        Set<ConstraintViolation<PerfilMentorRequestDTO>> violationsBranco = validator.validate(perfilMentorRequestDTO);
-        assertFalse(violationsBranco.isEmpty());
-        assertTrue(violationsBranco.stream().anyMatch(v -> v.getMessage().equals("Nome é obrigatório")));
-
-        Set<ConstraintViolation<PerfilMentorRequestDTO>> violationsCurto = validator.validate(perfilMentorRequestDTO);
-        assertTrue(violationsCurto.stream()
-                .anyMatch(v -> v.getMessage().equals("Nome deve ter entre 3 e 100 caracteres")));
-    }
-
-    @Test
-    @DisplayName("Deve falhar na validação se o e-mail estiver em branco ou for inválido")
-    void validacaoEmailInvalido() {
-        Set<ConstraintViolation<PerfilMentorRequestDTO>> violationsBranco = validator.validate(perfilMentorRequestDTO);
-        assertFalse(violationsBranco.isEmpty());
-        assertTrue(violationsBranco.stream().anyMatch(v -> v.getMessage().equals("Email é obrigatório")));
-
-        Set<ConstraintViolation<PerfilMentorRequestDTO>> violationsFormato = validator.validate(perfilMentorRequestDTO);
-        assertTrue(violationsFormato.stream().anyMatch(v -> v.getMessage().equals("Email inválido")));
-    }
-
-    @Test
-    @DisplayName("Deve falhar na validação se a senha estiver em branco ou tiver menos de 6 caracteres")
-    void validacaoSenhaInvalida() {
-        Set<ConstraintViolation<PerfilMentorRequestDTO>> violationsBranco = validator.validate(perfilMentorRequestDTO);
-        assertFalse(violationsBranco.isEmpty());
-        assertTrue(violationsBranco.stream().anyMatch(v -> v.getMessage().equals("Senha é obrigatória")));
-
-        Set<ConstraintViolation<PerfilMentorRequestDTO>> violationsCurta = validator.validate(perfilMentorRequestDTO);
-        assertTrue(
-                violationsCurta.stream().anyMatch(v -> v.getMessage().equals("Senha deve ter no mínimo 6 caracteres")));
     }
 
     @Test

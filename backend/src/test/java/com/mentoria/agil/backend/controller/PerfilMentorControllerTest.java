@@ -76,6 +76,8 @@ class PerfilMentorControllerTest {
     @DisplayName("Deve criar perfil de mentor com sucesso")
     void deveCriarPerfil() throws Exception {
         PerfilMentorRequestDTO dto = new PerfilMentorRequestDTO("Java", "5 anos", "Eng");
+        
+        when(userRepository.findByEmail(anyString())).thenReturn(java.util.Optional.of(mentorMock));
         when(perfilService.criarPerfilMentor(any(), anyString(), anyString(), anyString())).thenReturn(perfilMock);
 
         mockMvc.perform(post("/api/mentors")
@@ -133,9 +135,8 @@ class PerfilMentorControllerTest {
     void devePermitirAdminDeletar() throws Exception {
         User admin = new User();
         admin.setEmail("admin@teste.com");
-        admin.setRole(Role.ADMIN); // FIX: Define o papel no objeto usuário
+        admin.setRole(Role.ADMIN);
 
-        // FIX: Usa as autoridades reais do objeto User configurado
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(admin, null,
                         List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))));
