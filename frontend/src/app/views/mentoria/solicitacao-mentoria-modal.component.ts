@@ -47,7 +47,7 @@ export class SolicitacaoMentoriaModalComponent {
 
     this.loading = true;
     const request = {
-      mentorId: this.data.mentor.id,
+      mentorId: (this.data.mentor as any).userId || this.data.mentor.id, 
       message: this.form.value.message!
     };
 
