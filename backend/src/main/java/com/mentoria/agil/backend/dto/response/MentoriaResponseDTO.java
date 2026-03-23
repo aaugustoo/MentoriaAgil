@@ -1,7 +1,8 @@
 package com.mentoria.agil.backend.dto.response;
 
+import com.mentoria.agil.backend.enums.MentoriaStatus;
 import com.mentoria.agil.backend.model.MentoriaRequest;
-import com.mentoria.agil.backend.model.MentoriaStatus;
+
 import java.time.LocalDateTime;
 
 public class MentoriaResponseDTO {
@@ -15,7 +16,8 @@ public class MentoriaResponseDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public MentoriaResponseDTO() {}
+    public MentoriaResponseDTO() {
+    }
 
     public MentoriaResponseDTO(MentoriaRequest request) {
         this.id = request.getId();
