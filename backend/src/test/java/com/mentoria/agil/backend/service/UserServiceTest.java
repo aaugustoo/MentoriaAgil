@@ -21,8 +21,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.mentoria.agil.backend.dto.UserRequestDTO;
+import com.mentoria.agil.backend.enums.Role;
 import com.mentoria.agil.backend.exception.EmailJaCadastradoException;
-import com.mentoria.agil.backend.model.Role;
 import com.mentoria.agil.backend.model.User;
 import com.mentoria.agil.backend.repository.PerfilMentorRepository;
 import com.mentoria.agil.backend.repository.UserRepository;

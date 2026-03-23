@@ -1,4 +1,4 @@
-package com.mentoria.agil.backend.model;
+package com.mentoria.agil.backend.enums;
 
 public enum SessaoStatus {
     AGENDADA,

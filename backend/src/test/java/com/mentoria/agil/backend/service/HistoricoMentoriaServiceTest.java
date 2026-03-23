@@ -1,6 +1,9 @@
 package com.mentoria.agil.backend.service;
 
 import com.mentoria.agil.backend.dto.response.HistoricoSessaoDTO;
+import com.mentoria.agil.backend.enums.Role;
+import com.mentoria.agil.backend.enums.SessaoStatus;
+import com.mentoria.agil.backend.enums.TipoMaterial;
 import com.mentoria.agil.backend.model.*;
 import com.mentoria.agil.backend.repository.SessaoMaterialRepository;
 import com.mentoria.agil.backend.repository.SessaoRepository;

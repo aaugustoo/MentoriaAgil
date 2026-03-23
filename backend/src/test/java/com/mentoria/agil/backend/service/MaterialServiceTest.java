@@ -1,10 +1,10 @@
 package com.mentoria.agil.backend.service;
 
 import com.mentoria.agil.backend.dto.MaterialRequestDTO;
+import com.mentoria.agil.backend.enums.Role;
 import com.mentoria.agil.backend.exception.BusinessException;
 import com.mentoria.agil.backend.model.Material;
 import com.mentoria.agil.backend.model.MaterialMentorado;
-import com.mentoria.agil.backend.model.Role;
 import com.mentoria.agil.backend.model.User;
 import com.mentoria.agil.backend.repository.MaterialMentoradoRepository;
 import com.mentoria.agil.backend.repository.MaterialRepository;
@@ -68,14 +68,14 @@ class MaterialServiceTest {
         dtoComMentorados.setTitulo("Título Teste");
         dtoComMentorados.setDescricao("Descrição Teste");
         dtoComMentorados.setConteudo("http://teste.com");
-        dtoComMentorados.setTipo(com.mentoria.agil.backend.model.TipoMaterial.LINK);
+        dtoComMentorados.setTipo(com.mentoria.agil.backend.enums.TipoMaterial.LINK);
         dtoComMentorados.setMentoradosIds(Arrays.asList(2L, 3L));
 
         dtoSemMentorados = new MaterialRequestDTO();
         dtoSemMentorados.setTitulo("Título Sem Mentorados");
         dtoSemMentorados.setDescricao("Descrição");
         dtoSemMentorados.setConteudo("http://exemplo.com");
-        dtoSemMentorados.setTipo(com.mentoria.agil.backend.model.TipoMaterial.DOCUMENTO);
+        dtoSemMentorados.setTipo(com.mentoria.agil.backend.enums.TipoMaterial.DOCUMENTO);
         dtoSemMentorados.setMentoradosIds(null);
     }
 
@@ -214,10 +214,10 @@ class MaterialServiceTest {
     @Test
     void deveListarMateriaisPorMentorado() {
 
-        Material material1 = new Material("Material1", "Desc1", com.mentoria.agil.backend.model.TipoMaterial.LINK,
+        Material material1 = new Material("Material1", "Desc1", com.mentoria.agil.backend.enums.TipoMaterial.LINK,
                 "url1", mentor);
         material1.setId(101L);
-        Material material2 = new Material("Material2", "Desc2", com.mentoria.agil.backend.model.TipoMaterial.DOCUMENTO,
+        Material material2 = new Material("Material2", "Desc2", com.mentoria.agil.backend.enums.TipoMaterial.DOCUMENTO,
                 "url2", mentor);
         material2.setId(102L);
 

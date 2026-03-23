@@ -12,7 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.mentoria.agil.backend.model.Role;
+import com.mentoria.agil.backend.enums.Role;
 import com.mentoria.agil.backend.model.User;
 
 @ExtendWith(MockitoExtension.class)

@@ -3,6 +3,7 @@ package com.mentoria.agil.backend.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mentoria.agil.backend.dto.MentoriaRequestDTO;
 import com.mentoria.agil.backend.dto.MentoriaRequestUpdateDTO;
+import com.mentoria.agil.backend.enums.MentoriaStatus;
 import com.mentoria.agil.backend.interfaces.service.*;
 import com.mentoria.agil.backend.model.*;
 import com.mentoria.agil.backend.repository.UserRepository;
@@ -29,116 +30,111 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 class MentoriaRequestControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+        @Autowired
+        private MockMvc mockMvc;
+        private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @MockitoBean
-    private MentoriaRequestServiceInterface requestService;
-    @MockitoBean
-    private UserRepository userRepository;
-    @MockitoBean
-    private TokenServiceInterface tokenService;
-    @MockitoBean
-    private TokenBlacklistService tokenBlacklistService;
+        @MockitoBean
+        private MentoriaRequestServiceInterface requestService;
+        @MockitoBean
+        private UserRepository userRepository;
+        @MockitoBean
+        private TokenServiceInterface tokenService;
+        @MockitoBean
+        private TokenBlacklistService tokenBlacklistService;
 
-    @Test
-    void deveRetornar400QuandoCriarSolicitacaoComDadosInvalidos() throws Exception {
-        MentoriaRequestDTO dtoInvalido = new MentoriaRequestDTO();
-        dtoInvalido.setMentorId(null);
-        dtoInvalido.setMessage("");
+        @Test
+        void deveRetornar400QuandoCriarSolicitacaoComDadosInvalidos() throws Exception {
+                MentoriaRequestDTO dtoInvalido = new MentoriaRequestDTO();
+                dtoInvalido.setMentorId(null);
+                dtoInvalido.setMessage("");
 
-        mockMvc.perform(post("/api/mentorias/request")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dtoInvalido)))
-                .andExpect(status().isBadRequest());
-    }
+                mockMvc.perform(post("/api/mentorias/request")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(dtoInvalido)))
+                                .andExpect(status().isBadRequest());
+        }
 
-    @Test
-    void deveRetornar404QuandoMentorNaoEncontradoAoListarPendentes() throws Exception {
-        // Simula o contexto de segurança com um UserDetails
-        org.springframework.security.core.userdetails.User userDetails = 
-            new org.springframework.security.core.userdetails.User("erro@email.com", "senha", List.of());
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, null));
+        @Test
+        void deveRetornar404QuandoMentorNaoEncontradoAoListarPendentes() throws Exception {
+                org.springframework.security.core.userdetails.User userDetails = new org.springframework.security.core.userdetails.User(
+                                "erro@email.com", "senha", List.of());
+                SecurityContextHolder.getContext()
+                                .setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, null));
 
-        // Simula a falha na busca do usuário no banco
-        when(userRepository.findByEmail("erro@email.com")).thenReturn(Optional.empty());
+                when(userRepository.findByEmail("erro@email.com")).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/api/mentorias/pendentes"))
-                .andExpect(status().isNotFound());
-    }
+                mockMvc.perform(get("/api/mentorias/pendentes"))
+                                .andExpect(status().isNotFound());
+        }
 
-    @Test
-    void deveListarSolicitacoesPendentesComSucesso() throws Exception {
-        User mentor = new User("Mentor", "mentor@email.com", "senha");
-        org.springframework.security.core.userdetails.User userDetails = 
-            new org.springframework.security.core.userdetails.User("mentor@email.com", "senha", List.of());
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, null));
+        @Test
+        void deveCriarSolicitacao() throws Exception {
+                User mentorado = new User();
+                mentorado.setId(1L);
+                mentorado.setEmail("mentorado@teste.com");
+                mentorado.setName("João");
 
-        when(userRepository.findByEmail("mentor@email.com")).thenReturn(Optional.of(mentor));
-        when(requestService.listarPendentes(mentor)).thenReturn(List.of());
+                User mentor = new User();
+                mentor.setId(2L);
+                mentor.setName("Maria");
 
-        mockMvc.perform(get("/api/mentorias/pendentes"))
-                .andExpect(status().isOk());
-    }
+                SecurityContextHolder.getContext().setAuthentication(
+                                new UsernamePasswordAuthenticationToken(mentorado, null));
 
-    @Test
-    void deveCriarSolicitacao() throws Exception {
-        User mentorado = new User();
-        mentorado.setId(1L);
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(mentorado, null));
+                when(userRepository.findByEmail("mentorado@teste.com")).thenReturn(Optional.of(mentorado));
 
-        MentoriaRequestDTO dto = new MentoriaRequestDTO();
-        dto.setMentorId(2L);
-        dto.setMessage("Quero mentoria");
+                MentoriaRequestDTO dto = new MentoriaRequestDTO();
+                dto.setMentorId(2L);
+                dto.setMessage("Quero mentoria");
 
-        MentoriaRequest request = new MentoriaRequest();
-        request.setMentor(new User());
-        request.setMentorado(mentorado);
-        request.setStatus(MentoriaStatus.PENDING);
+                MentoriaRequest request = new MentoriaRequest();
+                request.setId(10L);
+                request.setMentorado(mentorado);
+                request.setMentor(mentor); // Define o mentor no mock
+                request.setStatus(MentoriaStatus.PENDING);
 
-        when(requestService.createRequest(any(), any())).thenReturn(request);
+                when(requestService.createRequest(any(), any())).thenReturn(request);
 
-        mockMvc.perform(post("/api/mentorias/request")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isCreated());
-    }
+                mockMvc.perform(post("/api/mentorias/request")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(dto)))
+                                .andExpect(status().isCreated());
+        }
 
-    @Test
-    void deveListarSolicitacoesPendentes() throws Exception {
-        User mentor = new User();
-        mentor.setEmail("mentor@teste.com");
-        
-        SecurityContextHolder.getContext().setAuthentication(
-            new UsernamePasswordAuthenticationToken(mentor, null));
+        @Test
+        void deveListarSolicitacoesPendentes() throws Exception {
+                User mentor = new User();
+                mentor.setEmail("mentor@teste.com");
+                SecurityContextHolder.getContext().setAuthentication(
+                                new UsernamePasswordAuthenticationToken(mentor, null));
 
-        when(userRepository.findByEmail(any())).thenReturn(java.util.Optional.of(mentor));
-        when(requestService.listarPendentes(any())).thenReturn(List.of());
+                when(userRepository.findByEmail(any())).thenReturn(Optional.of(mentor));
+                when(requestService.listarPendentes(any())).thenReturn(List.of());
 
-        mockMvc.perform(get("/api/mentorias/pendentes")).andExpect(status().isOk());
-    }
+                mockMvc.perform(get("/api/mentorias/pendentes")).andExpect(status().isOk());
+        }
 
-    @Test
-    void deveAtualizarStatusDaSolicitacao() throws Exception {
-        User mentor = new User();
-        mentor.setEmail("mentor@teste.com");
-        SecurityContextHolder.getContext().setAuthentication(
-            new UsernamePasswordAuthenticationToken(mentor, null));
+        @Test
+        void deveAtualizarStatusDaSolicitacao() throws Exception {
+                User mentor = new User();
+                mentor.setEmail("mentor@teste.com");
+                SecurityContextHolder.getContext().setAuthentication(
+                                new UsernamePasswordAuthenticationToken(mentor, null));
 
-        MentoriaRequestUpdateDTO dto = new MentoriaRequestUpdateDTO();
-        dto.setStatus(MentoriaStatus.ACCEPTED);
+                MentoriaRequestUpdateDTO dto = new MentoriaRequestUpdateDTO();
+                dto.setStatus(MentoriaStatus.ACCEPTED);
 
-        MentoriaRequest request = new MentoriaRequest();
-        request.setMentor(mentor);
-        request.setMentorado(new User());
+                MentoriaRequest request = new MentoriaRequest();
+                request.setMentor(mentor);
+                request.setMentorado(new User());
 
-        when(userRepository.findByEmail(any())).thenReturn(java.util.Optional.of(mentor));
-        when(requestService.atualizarStatus(any(), any(), any())).thenReturn(request);
+                when(userRepository.findByEmail(any())).thenReturn(Optional.of(mentor));
+                when(requestService.atualizarStatus(any(), any(), any())).thenReturn(request);
 
-        mockMvc.perform(patch("/api/mentorias/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isOk());
-    }
+                mockMvc.perform(patch("/api/mentorias/1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(dto)))
+                                .andExpect(status().isOk());
+        }
 }

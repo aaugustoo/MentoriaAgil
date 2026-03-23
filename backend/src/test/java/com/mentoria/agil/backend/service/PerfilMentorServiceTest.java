@@ -20,9 +20,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.mentoria.agil.backend.dto.PerfilMentorRequestDTO;
-import com.mentoria.agil.backend.model.PerfilMentor;
-import com.mentoria.agil.backend.model.Role;
-import com.mentoria.agil.backend.model.User;
+import com.mentoria.agil.backend.enums.DisponibilidadeStatus;
+import com.mentoria.agil.backend.enums.Role;
+import com.mentoria.agil.backend.enums.TipoMentoria;
+import com.mentoria.agil.backend.model.*;
 import com.mentoria.agil.backend.repository.PerfilMentorRepository;
 import com.mentoria.agil.backend.repository.UserRepository;
 
@@ -69,9 +70,15 @@ public class PerfilMentorServiceTest {
         usuarioMentor.setId(2L);
         usuarioMentor.setRole(Role.MENTOR);
 
-        perfilMentor = new PerfilMentor("Java", "5 anos no mercado", usuarioMentor);
+        perfilMentor = new PerfilMentor(
+                "Java",
+                "5 anos no mercado",
+                "Engenharia de Software",
+                "TI",
+                TipoMentoria.AMBAS,
+                DisponibilidadeStatus.DISPONIVEL,
+                usuarioMentor);
         perfilMentor.setId(1L);
-        perfilMentor.setFormacao("Engenharia de Software");
 
         usuarioMentor.setPerfilMentor(perfilMentor);
     }

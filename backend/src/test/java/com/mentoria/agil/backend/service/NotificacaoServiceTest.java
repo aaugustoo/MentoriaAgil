@@ -1,5 +1,6 @@
 package com.mentoria.agil.backend.service;
 
+import com.mentoria.agil.backend.enums.FormatoSessao;
 import com.mentoria.agil.backend.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
