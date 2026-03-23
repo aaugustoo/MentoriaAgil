@@ -2,11 +2,11 @@ package com.mentoria.agil.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mentoria.agil.backend.dto.MaterialRequestDTO;
+import com.mentoria.agil.backend.enums.Role;
+import com.mentoria.agil.backend.enums.TipoMaterial;
 import com.mentoria.agil.backend.interfaces.service.MaterialServiceInterface;
 import com.mentoria.agil.backend.interfaces.service.TokenServiceInterface;
 import com.mentoria.agil.backend.model.Material;
-import com.mentoria.agil.backend.model.Role;
-import com.mentoria.agil.backend.model.TipoMaterial;
 import com.mentoria.agil.backend.model.User;
 import com.mentoria.agil.backend.repository.UserRepository;
 import com.mentoria.agil.backend.service.TokenBlacklistService;

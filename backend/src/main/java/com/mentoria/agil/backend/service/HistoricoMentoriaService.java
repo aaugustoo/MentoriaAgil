@@ -1,11 +1,11 @@
 package com.mentoria.agil.backend.service;
 
 import com.mentoria.agil.backend.dto.response.HistoricoSessaoDTO;
+import com.mentoria.agil.backend.enums.SessaoStatus;
 import com.mentoria.agil.backend.interfaces.service.HistoricoMentoriaServiceInterface;
 import com.mentoria.agil.backend.model.Material;
 import com.mentoria.agil.backend.model.Sessao;
 import com.mentoria.agil.backend.model.SessaoMaterial;
-import com.mentoria.agil.backend.model.SessaoStatus;
 import com.mentoria.agil.backend.model.User;
 import com.mentoria.agil.backend.repository.SessaoMaterialRepository;
 import com.mentoria.agil.backend.repository.SessaoRepository;
@@ -22,8 +22,8 @@ public class HistoricoMentoriaService implements HistoricoMentoriaServiceInterfa
     private final UserRepository userRepository;
     private final SessaoMaterialRepository sessaoMaterialRepository;
 
-    public HistoricoMentoriaService(SessaoRepository sessaoRepository, UserRepository userRepository, 
-                                            SessaoMaterialRepository sessaoMaterialRepository) {
+    public HistoricoMentoriaService(SessaoRepository sessaoRepository, UserRepository userRepository,
+            SessaoMaterialRepository sessaoMaterialRepository) {
         this.sessaoRepository = sessaoRepository;
         this.userRepository = userRepository;
         this.sessaoMaterialRepository = sessaoMaterialRepository;

@@ -3,6 +3,8 @@ package com.mentoria.agil.backend.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.mentoria.agil.backend.dto.AgendamentoRequestDTO;
+import com.mentoria.agil.backend.enums.FormatoSessao;
+import com.mentoria.agil.backend.enums.Role;
 import com.mentoria.agil.backend.interfaces.service.AgendamentoServiceInterface;
 import com.mentoria.agil.backend.interfaces.service.TokenServiceInterface;
 import com.mentoria.agil.backend.model.*;
@@ -20,6 +22,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -47,7 +50,13 @@ class AgendamentoControllerTest {
     void setUp() {
         User user = new User();
         user.setId(1L);
-        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user, null));
+        user.setEmail("mentorado@test.com");
+        user.setRole(Role.ESTUDANTE);
+
+        when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+
+        SecurityContextHolder.getContext()
+                .setAuthentication(new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities()));
     }
 
     @Test

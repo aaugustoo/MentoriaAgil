@@ -1,9 +1,9 @@
 package com.mentoria.agil.backend.service;
 
 import com.mentoria.agil.backend.dto.DisponibilidadeRequestDTO;
+import com.mentoria.agil.backend.enums.Role;
 import com.mentoria.agil.backend.exception.BusinessException;
 import com.mentoria.agil.backend.model.Disponibilidade;
-import com.mentoria.agil.backend.model.Role;
 import com.mentoria.agil.backend.model.User;
 import com.mentoria.agil.backend.repository.DisponibilidadeRepository;
 import org.junit.jupiter.api.BeforeEach;

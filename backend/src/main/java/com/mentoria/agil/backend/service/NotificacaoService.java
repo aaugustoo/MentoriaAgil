@@ -11,6 +11,10 @@ public class NotificacaoService {
 
     private static final Logger logger = LoggerFactory.getLogger(NotificacaoService.class);
 
+    public void enviarConfirmacaoAgendamento(Sessao sessao) {
+        notificarAgendamento(sessao.getMentor(), sessao.getMentorado(), sessao);
+    }
+
     public void notificarAgendamento(User mentor, User mentorado, Sessao sessao) {
 
         String mensagemMentor = String.format(
@@ -20,8 +24,7 @@ public class NotificacaoService {
                 sessao.getDataHoraInicio().toLocalTime(),
                 sessao.getDataHoraFim().toLocalTime(),
                 sessao.getFormato(),
-                obterDetalhesLocal(sessao)
-        );
+                obterDetalhesLocal(sessao));
 
         String mensagemMentorado = String.format(
                 "Sessão agendada com %s em %s das %s às %s. Formato: %s. %s",
@@ -30,8 +33,7 @@ public class NotificacaoService {
                 sessao.getDataHoraInicio().toLocalTime(),
                 sessao.getDataHoraFim().toLocalTime(),
                 sessao.getFormato(),
-                obterDetalhesLocal(sessao)
-        );
+                obterDetalhesLocal(sessao));
 
         // Simula envio de e-mail
         logger.info("Enviando notificação para mentor {}: {}", mentor.getEmail(), mensagemMentor);
@@ -39,7 +41,7 @@ public class NotificacaoService {
     }
 
     private String obterDetalhesLocal(Sessao sessao) {
-        if (sessao.getFormato() == com.mentoria.agil.backend.model.FormatoSessao.ONLINE) {
+        if (sessao.getFormato() == com.mentoria.agil.backend.enums.FormatoSessao.ONLINE) {
             return "Link da reunião: " + sessao.getLinkReuniao();
         } else {
             return "Endereço: " + sessao.getEndereco();

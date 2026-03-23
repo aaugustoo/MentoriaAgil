@@ -25,28 +25,31 @@ public class PerfilMentorService implements PerfilMentorServiceInterface {
     }
 
     @Transactional
-public PerfilMentor criarPerfilMentor(User user, String especializacao, String experiencias, String formacao) {
-    if (user.getPerfilMentor() != null) {
-        throw new IllegalStateException("Usuário já possui perfil de mentor");
+    public PerfilMentor criarPerfilMentor(User user, String especializacao, String experiencias, String formacao) {
+        if (user.getPerfilMentor() != null) {
+            throw new IllegalStateException("Usuário já possui perfil de mentor");
+        }
+
+        // Garante que o usuário logado receba a role definitiva de MENTOR
+        user.setRole(com.mentoria.agil.backend.enums.Role.MENTOR);
+
+        PerfilMentor perfil = new PerfilMentor();
+        perfil.setEspecializacao(especializacao);
+        perfil.setExperiencias(experiencias);
+        perfil.setFormacao(formacao);
+        perfil.setUser(user);
+
+        PerfilMentor perfilSalvo = perfilMentorRepository.save(perfil);
+
+        user.setPerfilMentor(perfilSalvo);
+        userRepository.save(user);
+
+        return perfilSalvo;
     }
-
-    user.setRole(com.mentoria.agil.backend.model.Role.MENTOR);
-    
-    PerfilMentor perfil = new PerfilMentor(especializacao, experiencias, user);
-    perfil.setFormacao(formacao);
-    
-    // Primeiro salva o perfil para ele ter um ID e não ser mais transiente
-    PerfilMentor perfilSalvo = perfilMentorRepository.save(perfil);
-
-    user.setPerfilMentor(perfilSalvo);
-    userRepository.save(user);
-    
-    return perfilSalvo;
-}
 
     public PerfilMentor buscarPorId(Long id) {
         return perfilMentorRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Perfil de mentor não encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Perfil de mentor não encontrado"));
     }
 
     public List<PerfilMentor> listarTodos() {
@@ -58,11 +61,11 @@ public PerfilMentor criarPerfilMentor(User user, String especializacao, String e
         PerfilMentor perfil = buscarPorId(id);
         User user = perfil.getUser();
         user.setPerfilMentor(null);
-        user.setRole(com.mentoria.agil.backend.model.Role.VISITANTE);
+        user.setRole(com.mentoria.agil.backend.enums.Role.VISITANTE);
         userRepository.save(user);
         perfilMentorRepository.delete(perfil);
     }
-    
+
     @Transactional
     public PerfilMentor atualizar(User user, PerfilMentor perfil) {
         if (!perfil.getUser().getId().equals(user.getId())) {

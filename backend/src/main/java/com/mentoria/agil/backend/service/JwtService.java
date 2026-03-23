@@ -25,9 +25,11 @@ public class JwtService implements TokenServiceInterface {
     public String generateToken(User user) {
         return Jwts.builder()
                 .subject(user.getEmail())
-                .claim("role", user.getRole())
+                .claim("id", user.getId())
+                .claim("name", user.getName())
+                .claim("role", user.getRole().name())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 86400000)) 
+                .expiration(new Date(System.currentTimeMillis() + 86400000))
                 .signWith(getSigningKey())
                 .compact();
     }
@@ -40,7 +42,7 @@ public class JwtService implements TokenServiceInterface {
                     .parseSignedClaims(token)
                     .getPayload();
         } catch (JwtException _) {
-            return null; 
+            return null;
         }
     }
 
