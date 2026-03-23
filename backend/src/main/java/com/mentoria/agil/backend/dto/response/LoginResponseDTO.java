@@ -2,7 +2,7 @@ package com.mentoria.agil.backend.dto.response;
 
 import org.springframework.hateoas.RepresentationModel;
 
-import com.mentoria.agil.backend.model.Role;
+import com.mentoria.agil.backend.enums.Role;
 
 public class LoginResponseDTO extends RepresentationModel<LoginResponseDTO> {
     private final String token;
@@ -17,8 +17,19 @@ public class LoginResponseDTO extends RepresentationModel<LoginResponseDTO> {
         this.role = role;
     }
 
-    public String getToken() { return token; }
-    public String getName() { return name; }
-    public String getEmail() { return email; }
-    public Role getRole() { return role; }
+    public String getToken() {
+        return token;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public Role getRole() {
+        return role;
+    }
 }
