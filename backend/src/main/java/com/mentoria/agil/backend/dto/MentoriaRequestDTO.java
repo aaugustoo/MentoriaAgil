@@ -1,5 +1,3 @@
-// src/main/java/com/mentoria/agil/backend/dto/MentoriaRequestDTO.java
-
 package com.mentoria.agil.backend.dto;
 
 import com.mentoria.agil.backend.enums.FormatoSessao;
