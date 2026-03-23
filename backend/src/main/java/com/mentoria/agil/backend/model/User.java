@@ -8,6 +8,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.mentoria.agil.backend.enums.Role;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -47,16 +49,17 @@ public class User implements UserDetails {
     @Column(name = "tipo_mentoria")
     private String tipoMentoria;
 
-    private boolean ativo = true; 
+    private boolean ativo = true;
 
     @OneToOne(mappedBy = "user")
     private PerfilMentor perfilMentor;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    public User() {}
+    public User() {
+    }
 
-    public User(String name, String email, String password){
+    public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -70,58 +73,120 @@ public class User implements UserDetails {
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities(){
-        if (this.role == Role.ADMIN) {
-            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
-        }
-        if (this.role == Role.MENTOR) {
-            return List.of(new SimpleGrantedAuthority("ROLE_MENTOR"), new SimpleGrantedAuthority("ROLE_USER"));
-        }
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(this.role.name()));
     }
 
     @Override
-    public String getUsername() { return email; }
+    public String getUsername() {
+        return email;
+    }
 
     @Override
-    public boolean isAccountNonExpired() { return true; }
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
     @Override
-    public boolean isAccountNonLocked() { return true; }
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
     @Override
-    public boolean isCredentialsNonExpired() { return true; }
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
     @Override
-    public boolean isEnabled() { return ativo; }
+    public boolean isEnabled() {
+        return ativo;
+    }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public String getName() {
+        return name;
+    }
 
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public Role getRole() { return role; }
-    public void setRole(Role role) { this.role = role; }
+    public String getEmail() {
+        return email;
+    }
 
-    public String getEspecialidade() { return especialidade; }
-    public void setEspecialidade(String especialidade) { this.especialidade = especialidade; }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    public String getAreaInteresse() { return areaInteresse; }
-    public void setAreaInteresse(String areaInteresse) { this.areaInteresse = areaInteresse; }
+    public String getPassword() {
+        return password;
+    }
 
-    public String getTipoMentoria() { return tipoMentoria; }
-    public void setTipoMentoria(String tipoMentoria) { this.tipoMentoria = tipoMentoria; }
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-    public boolean isAtivo() { return ativo; }
-    public void setAtivo(boolean ativo) { this.ativo = ativo; }
+    public Role getRole() {
+        return role;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setRole(Role role) {
+        this.role = role;
+    }
 
-    public PerfilMentor getPerfilMentor(){ return perfilMentor; }
-    public void setPerfilMentor(PerfilMentor perfilMentor){ this.perfilMentor = perfilMentor; }
+    public String getEspecialidade() {
+        return especialidade;
+    }
+
+    public void setEspecialidade(String especialidade) {
+        this.especialidade = especialidade;
+    }
+
+    public String getAreaInteresse() {
+        return areaInteresse;
+    }
+
+    public void setAreaInteresse(String areaInteresse) {
+        this.areaInteresse = areaInteresse;
+    }
+
+    public String getTipoMentoria() {
+        return tipoMentoria;
+    }
+
+    public void setTipoMentoria(String tipoMentoria) {
+        this.tipoMentoria = tipoMentoria;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public PerfilMentor getPerfilMentor() {
+        return perfilMentor;
+    }
+
+    public void setPerfilMentor(PerfilMentor perfilMentor) {
+        this.perfilMentor = perfilMentor;
+    }
 }

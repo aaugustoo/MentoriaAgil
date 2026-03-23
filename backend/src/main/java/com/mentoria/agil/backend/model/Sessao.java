@@ -3,6 +3,9 @@ package com.mentoria.agil.backend.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+import com.mentoria.agil.backend.enums.FormatoSessao;
+import com.mentoria.agil.backend.enums.SessaoStatus;
+
 @Entity
 @Table(name = "sessao")
 public class Sessao {
@@ -26,7 +29,7 @@ public class Sessao {
     private LocalDateTime dataHoraFim;
 
     @Column(length = 1000)
-    private String observacoes; 
+    private String observacoes;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -44,11 +47,13 @@ public class Sessao {
 
     @OneToOne
     @JoinColumn(name = "mentoria_request_id")
-    private MentoriaRequest request; // opcional
+    private MentoriaRequest request;
 
-    public Sessao() {}
+    public Sessao() {
+    }
 
-    public Sessao(User mentor, User mentorado, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim, SessaoStatus status, String observacoes) {
+    public Sessao(User mentor, User mentorado, LocalDateTime dataHoraInicio, LocalDateTime dataHoraFim,
+            SessaoStatus status, String observacoes) {
         this.mentor = mentor;
         this.mentorado = mentorado;
         this.dataHoraInicio = dataHoraInicio;
@@ -113,35 +118,35 @@ public class Sessao {
         this.request = request;
     }
 
-    public String getObservacoes(){
+    public String getObservacoes() {
         return this.observacoes;
     }
 
-    public void setObservacoes(String observacoes){
+    public void setObservacoes(String observacoes) {
         this.observacoes = observacoes;
     }
 
-    public FormatoSessao getFormato() { 
-        return formato; 
+    public FormatoSessao getFormato() {
+        return formato;
     }
 
-    public void setFormato(FormatoSessao formato) { 
-        this.formato = formato; 
+    public void setFormato(FormatoSessao formato) {
+        this.formato = formato;
     }
 
-    public String getLinkReuniao() { 
-        return linkReuniao; 
+    public String getLinkReuniao() {
+        return linkReuniao;
     }
 
-    public void setLinkReuniao(String linkReuniao) { 
-        this.linkReuniao = linkReuniao; 
+    public void setLinkReuniao(String linkReuniao) {
+        this.linkReuniao = linkReuniao;
     }
 
-    public String getEndereco() { 
-        return endereco; 
+    public String getEndereco() {
+        return endereco;
     }
 
-    public void setEndereco(String endereco) { 
-        this.endereco = endereco; 
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
     }
 }

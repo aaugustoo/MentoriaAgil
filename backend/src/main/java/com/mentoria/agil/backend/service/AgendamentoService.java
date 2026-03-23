@@ -1,40 +1,58 @@
 package com.mentoria.agil.backend.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.mentoria.agil.backend.dto.AgendamentoRequestDTO;
+import com.mentoria.agil.backend.dto.response.SessaoResponseDTO;
+import com.mentoria.agil.backend.enums.*;
 import com.mentoria.agil.backend.exception.BusinessException;
 import com.mentoria.agil.backend.interfaces.service.AgendamentoServiceInterface;
 import com.mentoria.agil.backend.model.*;
-import com.mentoria.agil.backend.repository.DisponibilidadeRepository;
-import com.mentoria.agil.backend.repository.SessaoRepository;
-import com.mentoria.agil.backend.repository.UserRepository;
+import com.mentoria.agil.backend.repository.*;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.time.LocalDateTime;
 
 @Service
-public class AgendamentoService implements AgendamentoServiceInterface{
+public class AgendamentoService implements AgendamentoServiceInterface {
 
     private final SessaoRepository sessaoRepository;
     private final UserRepository userRepository;
     private final DisponibilidadeRepository disponibilidadeRepository;
+    private final MentoriaRequestRepository requestRepository;
     private final NotificacaoService notificacaoService;
 
-    public AgendamentoService(SessaoRepository sessaoRepository, 
-                            UserRepository userRepository, 
-                            DisponibilidadeRepository disponibilidadeRepository,
-                            NotificacaoService notificacaoService) {
+    public AgendamentoService(SessaoRepository sessaoRepository, UserRepository userRepository,
+            DisponibilidadeRepository disponibilidadeRepository, MentoriaRequestRepository requestRepository,
+            NotificacaoService notificacaoService) {
         this.sessaoRepository = sessaoRepository;
         this.userRepository = userRepository;
         this.disponibilidadeRepository = disponibilidadeRepository;
+        this.requestRepository = requestRepository;
         this.notificacaoService = notificacaoService;
     }
 
+    @Override
     @Transactional
     public Sessao agendar(User mentorado, AgendamentoRequestDTO dto) {
+        // 1. Validações de entrada (Sem banco de dados)
+        if (dto.getDataHoraInicio().isBefore(LocalDateTime.now())) {
+            throw new BusinessException("A data de início não pode ser no passado");
+        }
+        if (dto.getDataHoraFim().isBefore(dto.getDataHoraInicio())) {
+            throw new BusinessException("A data de fim deve ser posterior ao início");
+        }
+        if (dto.getFormato() == FormatoSessao.ONLINE
+                && (dto.getLinkReuniao() == null || dto.getLinkReuniao().isBlank())) {
+            throw new BusinessException("Link da reunião é obrigatório para sessões online");
+        }
+        if (dto.getFormato() == FormatoSessao.PRESENCIAL
+                && (dto.getEndereco() == null || dto.getEndereco().isBlank())) {
+            throw new BusinessException("Endereço é obrigatório para sessões presenciais");
+        }
 
+        // 2. Validações de Entidade
         User mentor = userRepository.findById(dto.getMentorId())
                 .orElseThrow(() -> new EntityNotFoundException("Mentor não encontrado"));
 
@@ -42,52 +60,52 @@ public class AgendamentoService implements AgendamentoServiceInterface{
             throw new BusinessException("O usuário selecionado não é um mentor");
         }
 
-        if (dto.getDataHoraInicio().isBefore(LocalDateTime.now())) {
-            throw new BusinessException("A data de início não pode ser no passado");
-        }
-
-        if (dto.getDataHoraFim().isBefore(dto.getDataHoraInicio())) {
-            throw new BusinessException("A data de fim deve ser posterior ao início");
-        }
-
-        // Quando já existe uma sessão agendada nesse intervalo de horas
-        boolean conflito = sessaoRepository.existsByMentorAndDataHoraInicioLessThanEqualAndDataHoraFimGreaterThanEqual(
-                mentor, dto.getDataHoraFim(), dto.getDataHoraInicio());
-        if (conflito) {
-            throw new BusinessException("Já existe uma sessão agendada neste horário");
-        }
-
-        // Verifica se o mentor está disponível nesse intervalo de horas
-        List<Disponibilidade> disponivel = disponibilidadeRepository.findDisponiveisNoIntervalo(
-                mentor, dto.getDataHoraInicio(), dto.getDataHoraFim());
-        if (disponivel.isEmpty()) {
+        // 3. Validações de Regra de Negócio (Banco de dados)
+        if (!disponibilidadeRepository.existsByMentorIdAndHorario(mentor.getId(), dto.getDataHoraInicio(),
+                dto.getDataHoraFim())) {
             throw new BusinessException("O mentor não possui disponibilidade neste horário");
         }
 
-        if (dto.getFormato() == FormatoSessao.ONLINE && (dto.getLinkReuniao() == null || dto.getLinkReuniao().isBlank())) {
-            throw new BusinessException("Link da reunião é obrigatório para sessões online");
+        if (sessaoRepository.existsConflito(mentor.getId(), dto.getDataHoraInicio(), dto.getDataHoraFim())) {
+            throw new BusinessException("Já existe uma sessão agendada neste horário");
         }
 
-        if (dto.getFormato() == FormatoSessao.PRESENCIAL && (dto.getEndereco() == null || dto.getEndereco().isBlank())) {
-            throw new BusinessException("Endereço é obrigatório para sessões presenciais");
-        }
+        // 4. Sincronização com Dashboard (Gera MentoriaRequest PENDING)
+        MentoriaRequest request = requestRepository
+                .findByMentoradoIdAndMentorIdAndStatus(mentorado.getId(), mentor.getId(), MentoriaStatus.PENDING)
+                .stream().findFirst()
+                .orElseGet(() -> {
+                    MentoriaRequest nova = new MentoriaRequest();
+                    nova.setMentorado(mentorado);
+                    nova.setMentor(mentor);
+                    nova.setStatus(MentoriaStatus.PENDING);
+                    nova.setMessage("Agendamento via calendário");
+                    return requestRepository.save(nova);
+                });
 
         Sessao sessao = new Sessao();
         sessao.setMentor(mentor);
         sessao.setMentorado(mentorado);
         sessao.setDataHoraInicio(dto.getDataHoraInicio());
         sessao.setDataHoraFim(dto.getDataHoraFim());
-        sessao.setStatus(SessaoStatus.AGENDADA);
         sessao.setFormato(dto.getFormato());
+        sessao.setLinkReuniao(dto.getLinkReuniao());
+        sessao.setEndereco(dto.getEndereco());
+        sessao.setStatus(SessaoStatus.AGENDADA);
+        sessao.setRequest(request);
 
-        if (dto.getFormato() == FormatoSessao.ONLINE) {
-            sessao.setLinkReuniao(dto.getLinkReuniao());
-        } else {
-            sessao.setEndereco(dto.getEndereco());
-        }
+        Sessao salva = sessaoRepository.save(sessao);
+        notificacaoService.enviarConfirmacaoAgendamento(salva);
+        return salva;
+    }
 
-        Sessao sessaoSalva = sessaoRepository.save(sessao);
-        notificacaoService.notificarAgendamento(mentor, mentorado, sessaoSalva);
-        return sessaoSalva;
+    @Override
+    public List<SessaoResponseDTO> buscarSessoesPorMentor(User mentor) {
+        return sessaoRepository.findAll().stream().map(SessaoResponseDTO::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Sessao> listarSessoesPorUsuario(User user, SessaoStatus status) {
+        return sessaoRepository.findAll();
     }
 }
