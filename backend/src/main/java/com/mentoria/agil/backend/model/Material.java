@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 
+import com.mentoria.agil.backend.enums.TipoMaterial;
+
 @Entity
 @Table(name = "materiais")
 public class Material {
@@ -36,7 +38,7 @@ public class Material {
     @NotNull(message = "O mentor é obrigatório")
     @ManyToOne
     @JoinColumn(name = "mentor_id", nullable = false)
-    private User mentor;  // assumindo que User tem role MENTOR
+    private User mentor;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -55,7 +57,8 @@ public class Material {
         updatedAt = LocalDateTime.now();
     }
 
-    public Material() {}
+    public Material() {
+    }
 
     public Material(String titulo, String descricao, TipoMaterial tipo, String conteudo, User mentor) {
         this.titulo = titulo;
