@@ -1,11 +1,11 @@
 package com.mentoria.agil.backend.service;
 
 import com.mentoria.agil.backend.dto.response.HistoricoSessaoDTO;
+import com.mentoria.agil.backend.enums.SessaoStatus;
 import com.mentoria.agil.backend.interfaces.service.HistoricoMentoriaServiceInterface;
 import com.mentoria.agil.backend.model.Material;
 import com.mentoria.agil.backend.model.Sessao;
 import com.mentoria.agil.backend.model.SessaoMaterial;
-import com.mentoria.agil.backend.model.SessaoStatus;
 import com.mentoria.agil.backend.model.User;
 import com.mentoria.agil.backend.repository.SessaoMaterialRepository;
 import com.mentoria.agil.backend.repository.SessaoRepository;
@@ -14,17 +14,16 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-public class HistoricoMentoriaService implements HistoricoMentoriaServiceInterface{
+public class HistoricoMentoriaService implements HistoricoMentoriaServiceInterface {
 
     private final SessaoRepository sessaoRepository;
     private final UserRepository userRepository;
     private final SessaoMaterialRepository sessaoMaterialRepository;
 
-    public HistoricoMentoriaService(SessaoRepository sessaoRepository, UserRepository userRepository, 
-                                            SessaoMaterialRepository sessaoMaterialRepository) {
+    public HistoricoMentoriaService(SessaoRepository sessaoRepository, UserRepository userRepository,
+            SessaoMaterialRepository sessaoMaterialRepository) {
         this.sessaoRepository = sessaoRepository;
         this.userRepository = userRepository;
         this.sessaoMaterialRepository = sessaoMaterialRepository;
@@ -46,13 +45,12 @@ public class HistoricoMentoriaService implements HistoricoMentoriaServiceInterfa
 
         return sessoes.stream()
                 .map(sessao -> {
-                    // Busca os materiais de apoio associados a uma sessão específica
                     List<Material> materiais = sessaoMaterialRepository.findBySessaoId(sessao.getId())
                             .stream()
                             .map(SessaoMaterial::getMaterial)
-                            .collect(Collectors.toList());
+                            .toList();
                     return new HistoricoSessaoDTO(sessao, materiais);
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 }

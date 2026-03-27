@@ -1,6 +1,7 @@
 package com.mentoria.agil.backend.dto;
 
-import com.mentoria.agil.backend.model.MentoriaStatus;
+import com.mentoria.agil.backend.enums.MentoriaStatus;
+
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -11,19 +12,19 @@ public class MentoriaRequestUpdateDTO {
     @Size(max = 500, message = "A justificativa deve ter no máximo 500 caracteres")
     private String justificativa; // usado quando REJECTED
 
-    public MentoriaStatus getStatus() { 
-        return status; 
+    public MentoriaStatus getStatus() {
+        return status;
     }
 
-    public void setStatus(MentoriaStatus status) { 
-        this.status = status; 
+    public void setStatus(MentoriaStatus status) {
+        this.status = status;
     }
 
-    public String getJustificativa() { 
-        return justificativa; 
+    public String getJustificativa() {
+        return justificativa;
     }
 
-    public void setJustificativa(String justificativa) { 
-        this.justificativa = justificativa; 
+    public void setJustificativa(String justificativa) {
+        this.justificativa = justificativa;
     }
 }

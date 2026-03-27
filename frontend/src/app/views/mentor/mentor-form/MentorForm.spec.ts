@@ -47,24 +47,24 @@ describe('MentorFormComponent', () => {
   });
 
   it('deve chamar o serviço com os dados mapeados ao submeter formulário válido', () => {
-    component.mentorForm.setValue({
-      specialty: 'Backend',
-      experienceYears: 8,
-      bio: 'Especialista em Java e Spring.',
-      skills: 'Java, Spring Boot, PostgreSQL'
-    });
-
-    component.enviar();
-
-    expect(mentorServiceMock.createProfile).toHaveBeenCalledWith({
-      specialty: 'Backend',
-      experienceYears: 8,
-      bio: 'Especialista em Java e Spring.',
-      skills: ['Java', 'Spring Boot', 'PostgreSQL']
-    });
-    
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/dashboard']);
+  component.mentorForm.setValue({
+    specialty: 'Backend',
+    experienceYears: 8,
+    bio: 'Especialista em Java e Spring.',
+    skills: 'Java, Spring Boot, PostgreSQL'
   });
+
+  component.enviar();
+
+  // Atualize a expectativa para o novo formato do payload
+  expect(mentorServiceMock.createProfile).toHaveBeenCalledWith({
+    especializacao: 'Backend',
+    experiencias: '8 anos. Bio: Especialista em Java e Spring.',
+    formacao: 'Java, Spring Boot, PostgreSQL'
+  });
+  
+  expect(routerMock.navigate).toHaveBeenCalledWith(['/dashboard']);
+});
 
   it('não deve chamar o serviço se o formulário estiver inválido', () => {
     component.mentorForm.setValue({

@@ -1,11 +1,12 @@
 package com.mentoria.agil.backend.dto.response;
 
+import com.mentoria.agil.backend.enums.TipoMaterial;
 import com.mentoria.agil.backend.model.Material;
-import com.mentoria.agil.backend.model.TipoMaterial;
+
 import java.time.LocalDateTime;
 
 public class MaterialResponseDTO {
-    
+
     private Long id;
     private String titulo;
     private String descricao;
@@ -16,9 +17,10 @@ public class MaterialResponseDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public MaterialResponseDTO(){}
+    public MaterialResponseDTO() {
+    }
 
-    public MaterialResponseDTO (Material material) {
+    public MaterialResponseDTO(Material material) {
         this.id = material.getId();
         this.titulo = material.getTitulo();
         this.descricao = material.getDescricao();
@@ -29,7 +31,7 @@ public class MaterialResponseDTO {
         this.createdAt = material.getCreatedAt();
         this.updatedAt = material.getUpdatedAt();
     }
-    
+
     public Long getId() {
         return id;
     }

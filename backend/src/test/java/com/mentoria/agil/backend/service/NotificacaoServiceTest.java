@@ -1,11 +1,14 @@
 package com.mentoria.agil.backend.service;
 
+import com.mentoria.agil.backend.enums.FormatoSessao;
 import com.mentoria.agil.backend.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.time.LocalDateTime;
 
@@ -47,12 +50,11 @@ class NotificacaoServiceTest {
 
     @Test
     void deveLogarNotificacaoParaSessaoOnline() {
-        notificacaoService.notificarAgendamento(mentor, mentorado, sessaoOnline);
-        // Se chegou aqui, não houve exceção
+        assertDoesNotThrow(() -> notificacaoService.notificarAgendamento(mentor, mentorado, sessaoOnline));
     }
 
     @Test
     void deveLogarNotificacaoParaSessaoPresencial() {
-        notificacaoService.notificarAgendamento(mentor, mentorado, sessaoPresencial);
+        assertDoesNotThrow(() -> notificacaoService.notificarAgendamento(mentor, mentorado, sessaoPresencial));
     }
 }

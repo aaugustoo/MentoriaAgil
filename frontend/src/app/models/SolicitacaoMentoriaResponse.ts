@@ -1,11 +1,13 @@
 export interface SolicitacaoMentoriaResponse {
   id: number;
   mentoradoId: number;
-  mentoradoName: string;
-  mentorId: number;
-  mentorName: string;
-  message: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
+  mentoradoNome: string;
+  mentoradoEmail: string;
+  mensagem: string;
+  status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'CANCELLED';
+  dataSolicitacao: string;
+  dataHoraProposta: string;
+  formato: 'ONLINE' | 'PRESENCIAL';
+  linkReuniao?: string;
+  endereco?: string;
 }

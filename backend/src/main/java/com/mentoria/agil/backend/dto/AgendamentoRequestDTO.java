@@ -1,78 +1,76 @@
+// src/main/java/com/mentoria/agil/backend/dto/AgendamentoRequestDTO.java
 package com.mentoria.agil.backend.dto;
 
-import com.mentoria.agil.backend.model.FormatoSessao;
-import jakarta.validation.constraints.Future;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.mentoria.agil.backend.enums.FormatoSessao;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 public class AgendamentoRequestDTO {
 
-    @NotNull(message = "ID do mentor é obrigatório")
+    @NotNull(message = "O mentor é obrigatório")
     private Long mentorId;
 
-    @NotNull(message = "Data/hora de início é obrigatória")
-    @Future(message = "A data de início deve ser futura")
+    @NotNull(message = "A data de início é obrigatória")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dataHoraInicio;
 
-    @NotNull(message = "Data/hora de fim é obrigatória")
-    @Future(message = "A data de fim deve ser futura")
+    @NotNull(message = "A data de fim é obrigatória")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dataHoraFim;
 
-    @NotNull(message = "Formato da sessão é obrigatório")
+    @NotNull(message = "O formato da sessão é obrigatório")
     private FormatoSessao formato;
 
-    @Size(max = 500, message = "O link deve ter no máximo 500 caracteres")
-    private String linkReuniao; // Obrigatório quando ONLINE
+    private String linkReuniao;
+    private String endereco;
 
-    @Size(max = 500, message = "O endereço deve ter no máximo 500 caracteres")
-    private String endereco; // Obrigatório quando PRESENCIAL
-
-    public Long getMentorId() { 
-        return mentorId; 
+    // Getters e Setters...
+    public Long getMentorId() {
+        return mentorId;
     }
 
-    public void setMentorId(Long mentorId) { 
-        this.mentorId = mentorId; 
+    public void setMentorId(Long mentorId) {
+        this.mentorId = mentorId;
     }
 
-    public LocalDateTime getDataHoraInicio() { 
-        return dataHoraInicio; 
+    public LocalDateTime getDataHoraInicio() {
+        return dataHoraInicio;
     }
 
-    public void setDataHoraInicio(LocalDateTime dataHoraInicio) { 
-        this.dataHoraInicio = dataHoraInicio; 
+    public void setDataHoraInicio(LocalDateTime dataHoraInicio) {
+        this.dataHoraInicio = dataHoraInicio;
     }
 
-    public LocalDateTime getDataHoraFim() { 
-        return dataHoraFim; 
+    public LocalDateTime getDataHoraFim() {
+        return dataHoraFim;
     }
 
-    public void setDataHoraFim(LocalDateTime dataHoraFim) { 
-        this.dataHoraFim = dataHoraFim; 
+    public void setDataHoraFim(LocalDateTime dataHoraFim) {
+        this.dataHoraFim = dataHoraFim;
     }
 
-    public FormatoSessao getFormato() { 
-        return formato; 
+    public FormatoSessao getFormato() {
+        return formato;
     }
 
-    public void setFormato(FormatoSessao formato) { 
-        this.formato = formato; 
+    public void setFormato(FormatoSessao formato) {
+        this.formato = formato;
     }
 
-    public String getLinkReuniao() { 
-        return linkReuniao; 
+    public String getLinkReuniao() {
+        return linkReuniao;
     }
 
-    public void setLinkReuniao(String linkReuniao) { 
-        this.linkReuniao = linkReuniao; 
+    public void setLinkReuniao(String linkReuniao) {
+        this.linkReuniao = linkReuniao;
     }
 
-    public String getEndereco() { 
-        return endereco; 
+    public String getEndereco() {
+        return endereco;
     }
 
-    public void setEndereco(String endereco) { 
-        this.endereco = endereco; 
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
     }
 }

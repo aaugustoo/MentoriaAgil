@@ -1,17 +1,14 @@
 package com.mentoria.agil.backend.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import com.mentoria.agil.backend.enums.DisponibilidadeStatus;
+import com.mentoria.agil.backend.enums.TipoMentoria;
+
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "mentors")
 public class PerfilMentor {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,24 +16,38 @@ public class PerfilMentor {
     @Column(nullable = false)
     private String especializacao;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String experiencias;
 
-    @Column(nullable = true)
     private String formacao;
 
+    private String areaPrincipal;
+
+    @Enumerated(EnumType.STRING)
+    private TipoMentoria tipoMentoria;
+
+    @Enumerated(EnumType.STRING)
+    private DisponibilidadeStatus disponibilidade;
+
     @OneToOne
-    @JoinColumn(name = "usuario_id", unique = true, nullable = false)
+    @JoinColumn(name = "usuario_id", nullable = false)
     private User user;
 
-    public PerfilMentor() {}
+    public PerfilMentor() {
+    }
 
-    public PerfilMentor(String especializacao, String experiencias, User user) {
+    public PerfilMentor(String especializacao, String experiencias, String formacao,
+            String areaPrincipal, TipoMentoria tipo, DisponibilidadeStatus disp, User user) {
         this.especializacao = especializacao;
         this.experiencias = experiencias;
+        this.formacao = formacao;
+        this.areaPrincipal = areaPrincipal;
+        this.tipoMentoria = tipo;
+        this.disponibilidade = disp;
         this.user = user;
     }
 
+    // Getters e Setters
     public Long getId() {
         return id;
     }
@@ -77,11 +88,27 @@ public class PerfilMentor {
         this.user = user;
     }
 
-    public String getName() {
-        return user != null ? user.getName() : null;
+    public String getAreaPrincipal() {
+        return areaPrincipal;
     }
-    
-    public String getEmail() {
-        return user != null ? user.getEmail() : null;
+
+    public void setAreaPrincipal(String areaPrincipal) {
+        this.areaPrincipal = areaPrincipal;
+    }
+
+    public TipoMentoria getTipoMentoria() {
+        return tipoMentoria;
+    }
+
+    public void setTipoMentoria(TipoMentoria tipoMentoria) {
+        this.tipoMentoria = tipoMentoria;
+    }
+
+    public DisponibilidadeStatus getDisponibilidade() {
+        return disponibilidade;
+    }
+
+    public void setDisponibilidade(DisponibilidadeStatus disponibilidade) {
+        this.disponibilidade = disponibilidade;
     }
 }

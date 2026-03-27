@@ -1,7 +1,7 @@
 package com.mentoria.agil.backend.dto.response;
 
+import com.mentoria.agil.backend.enums.TipoMaterial;
 import com.mentoria.agil.backend.model.Material;
-import com.mentoria.agil.backend.model.TipoMaterial;
 
 public class MaterialResumoDTO {
     private Long id;
@@ -16,35 +16,35 @@ public class MaterialResumoDTO {
         this.conteudo = material.getConteudo();
     }
 
-    public Long getId(){
-        return id; 
+    public Long getId() {
+        return id;
     }
 
-    public void setId(Long id){
-        this.id = id; 
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getTitulo(){
-        return titulo; 
+    public String getTitulo() {
+        return titulo;
     }
 
-    public void setTitulo(String titulo){
-        this.titulo = titulo; 
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
     }
 
-    public TipoMaterial getTipo(){ 
-        return tipo; 
+    public TipoMaterial getTipo() {
+        return tipo;
     }
 
-    public void setTipo(TipoMaterial tipo){ 
-        this.tipo = tipo; 
+    public void setTipo(TipoMaterial tipo) {
+        this.tipo = tipo;
     }
 
-    public String getConteudo(){ 
-        return conteudo; 
+    public String getConteudo() {
+        return conteudo;
     }
 
-    public void setConteudo(String conteudo){ 
-        this.conteudo = conteudo; 
+    public void setConteudo(String conteudo) {
+        this.conteudo = conteudo;
     }
 }

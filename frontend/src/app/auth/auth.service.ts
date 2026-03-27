@@ -3,15 +3,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, map, tap, catchError, of } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { User } from '../models/User';
-import { environment } from '../../enviroments/enviroment';
+import { environment } from '../../environments/environment';
 
 export type UserRole = 'ADMIN' | 'MENTOR' | 'USER' | 'VISITANTE';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-
   private readonly API_URL = `${environment.apiUrl}/auth`;
 
   private readonly TOKEN_KEY = 'auth_token';
@@ -22,17 +21,18 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  login(email: string, password: string): Observable<boolean> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+  getUserRole(): string | null {
+    const user = this.currentUserSubject.value;
+    return user ? user.role : null;
+  }
 
-    return this.http.post<{ token: string }>(
-      `${this.API_URL}/login`, 
-      { email, password }, 
-      { headers } 
-    ).pipe(
-      tap(response => this.handleAuthentication(response.token)),
+  login(email: string, password: string): Observable<boolean> {
+    return this.http.post<any>(`${this.API_URL}/login`, { email, password }).pipe(
+      tap((response) => {
+        this.handleAuthentication(response.token);
+      }),
       map(() => true),
-      catchError(() => of(false))
+      catchError(() => of(false)),
     );
   }
 
@@ -45,7 +45,6 @@ export class AuthService {
   }
 
   logout(): void {
-    
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.USER_KEY);
     this.currentUserSubject.next(null);
@@ -85,9 +84,9 @@ export class AuthService {
       const user: User = {
         id: decoded.id,
         name: decoded.name,
-        email: decoded.email,
+        email: decoded.sub,
         role: decoded.role,
-        token: token
+        token: token,
       };
 
       localStorage.setItem(this.TOKEN_KEY, token);
@@ -96,10 +95,11 @@ export class AuthService {
       this.currentUserSubject.next(user);
     } catch (error) {
       console.error('Erro ao decodificar token', error);
+      this.logout();
     }
   }
 
-  private loadUser(): User | null {
+  public loadUser(): User | null {
     const storedUser = localStorage.getItem(this.USER_KEY);
     return storedUser ? JSON.parse(storedUser) : null;
   }
